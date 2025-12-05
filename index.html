@@ -1,107 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Futures, made of, virtual insanity~ || fuck u adrev btw dont think i forgot u bitch V1 (post ipsums)</title>
     <style>
-        body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background: #000; color: #e6e6e6; line-height: 1.6;}
+        /* Base / theme variables */
+        :root{
+            --bg: #000;
+            --panel: #0b0b0b;
+            --muted: #999;
+            --text: #e6e6e6;
+            --border: #333;
+            --accent: #e25;
+            --panel-2: #1a1a1a;
+            --control-bg: #1a1a1a;
+            --control-border: #333;
+        }
+        .light {
+            --bg: #f5f6f7;
+            --panel: #ffffff;
+            --muted: #666;
+            --text: #111;
+            --border: #d6d6d6;
+            --accent: #b30000;
+            --panel-2: #f0f0f0;
+            --control-bg: #fff;
+            --control-border: #d6d6d6;
+        }
+
+        body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin:0; }
         .container { display: flex; min-height: 100vh; }
-        .header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 1000; }
-        .logo { font-size: 18px; font-weight: 600; color: #fff; }
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 1000; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05)); }
+        .logo { font-size: 18px; font-weight: 600; color: var(--text); cursor: pointer; user-select: none; display:flex; align-items:center; gap:12px; }
         .header-right { display: flex; align-items: center; gap: 12px; }
         .search-container { position: relative; }
-        .search-box { background: #1a1a1a; border: 1px solid #333; border-radius: 6px; padding: 8px 12px 8px 36px; color: #e6e6e6; font-size: 14px; width: 240px; transition: all 0.2s ease; }
-        .search-box:focus { outline: none; border-color: #666; background: #000; }
-        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; font-size: 14px; }
-        .header-icons { display: flex; gap: 8px; }
-        .icon-btn { width: 32px; height: 32px; background: #1a1a1a; border: 1px solid #333; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #e6e6e6; cursor: pointer; transition: all 0.2s ease; font-size: 14px; }
-        .icon-btn:hover { background: #333; }
-        .sidebar { width: 280px; background: #000; border-right: 1px solid #333; padding-top: 60px; position: fixed; height: 100vh; overflow-y: auto; transition: transform 0.3s ease; }
+        .search-box { background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 10px; padding: 8px 12px 8px 36px; color: var(--text); font-size: 14px; width: 240px; transition: all 0.18s ease; -webkit-text-fill-color: var(--text); }
+        .search-box:focus { outline: none; border-color: #888; background: var(--panel-2); }
+        .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+        .header-icons { display: flex; gap: 8px; align-items:center; }
+
+        .icon-btn { width: 36px; height: 36px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text); cursor: pointer; transition: all 0.18s ease; font-size: 14px; }
+        .icon-btn:hover { background: var(--panel-2); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+
+        /* hide header hamburger (we place page hamburger beside page title) */
+        .header-icons #hamburger { display: none; }
+
+        .sidebar { width: 280px; background: var(--panel); border-right: 1px solid var(--border); padding-top: 60px; position: fixed; height: 100vh; overflow-y: auto; transition: transform 0.28s ease, box-shadow 0.28s ease; box-shadow: 0 6px 30px rgba(0,0,0,0.4); }
         .sidebar.hidden { transform: translateX(-100%); }
-        .nav-item { display: block; padding: 12px 24px; color: #e6e6e6; text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.2s ease; border-left: 3px solid transparent; cursor: pointer; user-select: none;}
-        .nav-item:hover { background: #1a1a1a; color: #fff; }
-        .nav-item.active { background: #1a1a1a; border-left-color: #666; color: #fff;}
-        .nav-divider { padding: 12px 24px; color: #fff; font-size: 14px; font-weight: 700; border-top: 1px solid #333; border-bottom: 1px solid #333; background: #000; cursor: default; }
-        .main-content { flex: 1; margin-left: 280px; padding-top: 60px; transition: margin-left 0.3s ease; }
+        .nav-item { display: block; padding: 12px 24px; color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; transition: all 0.12s ease; border-left: 3px solid transparent; cursor: pointer; user-select: none; border-radius: 6px; margin: 6px 8px; }
+        .nav-item:hover { background: var(--panel-2); color: var(--text); }
+        .nav-item.active { background: var(--panel-2); border-left-color: #666; color: var(--text); }
+        .nav-divider { padding: 12px 24px; color: var(--text); font-size: 14px; font-weight: 700; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--panel); cursor: default; margin-top: 12px; }
+        .main-content { flex: 1; margin-left: 280px; padding-top: 60px; transition: margin-left 0.28s ease; min-height:100vh; }
         .main-content.full { margin-left: 0; }
-        .content-area { max-width: 900px; padding: 48px; }
-        .page-title { font-size: 48px; font-weight: 800; color: #fff; margin-bottom: 24px; letter-spacing: -0.02em; }
-        .page-description { font-size: 18px; color: #999; margin-bottom: 48px; line-height: 1.7; }
-        .section-title { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 32px; margin-top: 64px; }
+        .content-area { max-width: 1000px; padding: 48px; margin: 0 auto; }
+        .title-row { display:flex; align-items:center; gap:16px; margin-bottom:8px; }
+        .page-hamburger { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:10px; background:var(--control-bg); border:1px solid var(--control-border); cursor:pointer; color:var(--text); font-size:18px; transition:all .18s; }
+        .page-hamburger:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+
+        .page-title { font-size: 48px; font-weight: 800; color: var(--text); margin: 0; letter-spacing: -0.02em; }
+        .page-description { font-size: 18px; color: var(--muted); margin-bottom: 24px; line-height: 1.7; }
+        .section-title { font-size: 32px; font-weight: 700; color: var(--text); margin-bottom: 32px; margin-top: 64px; }
         .feature-list { list-style: none; margin: 0; padding: 0; }
         .feature-list .feature-item + .feature-item { margin-top: 16px; }
-        .feature-item { display: flex; align-items: flex-start; gap: 16px; padding: 24px 0; border-bottom: 1px solid #333;}
-        .feature-item:last-child { border-bottom: none; }
+        .feature-item { display: flex; align-items: flex-start; gap: 16px; padding: 18px; border-radius: 10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); border:1px solid var(--border); margin-bottom:8px; }
         .feature-icon { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; font-size: 18px; }
-        .feature-content h3 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-        .feature-content p { font-size: 15px; color: #999; line-height: 1.5; margin-left: 16px; }
-        .toc { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); width: 200px; background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); border: 1px solid #333; border-radius: 12px; padding: 24px; }
-        .toc-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .toc-list { list-style: none; }
+        .feature-content h3 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+        .feature-content p { font-size: 15px; color: var(--muted); line-height: 1.5; margin-left: 0; margin-top:4px; }
+
+        .toc { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); width: 220px; background: var(--panel); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+        .toc-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .toc-list { list-style: none; margin:0; padding:0; }
         .toc-item { margin-bottom: 8px; }
-        .toc-link { color: #999; text-decoration: none; font-size: 13px; transition: color 0.2s ease; display: block; padding: 4px 0; }
-        .toc-link:hover, .toc-link.active { color: #fff; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to   { opacity: 1; transform: translateY(0); } }
-        .content-area > * { animation: fadeInUp 0.6s ease-out; }
-        .pagination-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 32px;
-        }
-        .pagination-btn {
-            display: inline-block;
-            padding: 8px 24px;
-            font-size: 15px;
-            color: #fff;
-            background: transparent;
-            border: 2px solid #fff;
-            border-radius: 999px;
-            cursor: pointer;
-            transition: background 0.18s, color 0.18s, border-color 0.18s;
-            font-weight: 600;
-            outline: none;
-        }
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: default;
-        }
-        .pagination-btn:not(:disabled):hover {
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-            border-color: #fff;
-        }
-                .toc-content {
-            margin-top: 24px;
-            color: #ccc;
-            font-size: 14px;
-            min-height: 60px;
-            opacity: 1;
-            transition: opacity 0.3s;
-        }
+        .toc-link { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.12s ease; display: block; padding: 4px 0; }
+        .toc-link:hover, .toc-link.active { color: var(--text); }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .content-area > * { animation: fadeInUp 0.36s ease-out; }
+
+        .pagination-buttons { display: flex; justify-content: center; gap: 24px; margin-top: 32px; }
+        .pagination-btn { display: inline-block; padding: 8px 24px; font-size: 15px; color: var(--text); background: transparent; border: 2px solid var(--text); border-radius: 999px; cursor: pointer; transition: background 0.18s, color 0.18s, border-color 0.18s; font-weight: 600; outline: none; }
+        .pagination-btn:disabled { opacity: 0.45; cursor: default; }
+        .pagination-btn:not(:disabled):hover { background: rgba(255,255,255,0.04); color: var(--text); border-color: var(--text); }
+
+        .toc-content { margin-top: 12px; color: var(--muted); font-size: 14px; min-height: 60px; opacity: 1; transition: opacity 0.2s; }
         .toc-content.fade { opacity: 0; }
+
+        /* new: search results */
+        .search-results-count { color: var(--muted); margin-bottom: 8px; font-size: 13px; }
+        .search-hit { padding: 12px; border: 1px solid var(--border); margin-bottom: 8px; border-radius: 8px; background: var(--panel-2); }
+        .search-hit .cat { color: var(--muted); font-size: 13px; margin-left: 8px; }
+
+        /* modern select (updated to respect theme variables) */
+        .modern-select { position: relative; display:inline-block; }
+        .modern-select select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: var(--control-bg);
+            color: var(--text);
+            border: 1px solid var(--control-border);
+            padding: 8px 36px 8px 10px;
+            border-radius: 8px;
+            min-width: 160px;
+            font-size: 14px;
+            transition: background-color .18s, color .18s, border-color .18s;
+            /* ensure WebKit respects color */
+            -webkit-text-fill-color: var(--text);
+        }
+        /* arrow (color adapts with --muted) */
+        .modern-select::after {
+            content: '▾';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            pointer-events: none;
+            font-size: 12px;
+        }
+        /* Try to style option backgrounds as well (browser support varies) */
+        .modern-select select option {
+            color: var(--text);
+            background-color: var(--panel);
+        }
+        /* hide MS default arrow */
+        .modern-select select::-ms-expand { display:none; }
+
+        .sort-controls { display:flex; gap:8px; align-items:center; margin: 8px 0 18px; }
+
+        /* modal / easter egg */
+        .eg-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .eg-overlay.show { display:flex; }
+        .eg-modal { background: var(--panel); border:1px solid var(--border); padding:24px; border-radius:12px; max-width:560px; color:var(--text); text-align:center; box-shadow: 0 10px 40px rgba(0,0,0,0.7); }
+        .eg-modal h2 { margin: 0 0 12px; font-size:20px; }
+        .eg-modal p { color:var(--muted); margin-bottom:16px; }
+        .eg-modal .close { display:inline-block; padding:8px 14px; border-radius:8px; background:var(--control-bg); border:1px solid var(--control-border); cursor:pointer; color:var(--text); }
+
+        /* small responsive tweak */
+        @media (max-width: 900px) {
+            .toc { display: none; }
+            .main-content { margin-left: 0; padding: 12px 8px 48px; }
+            .sidebar { position: absolute; z-index: 1200; width: 80%; max-width: 320px; left:0; }
+            .content-area { padding: 24px; }
+            .page-title { font-size: 28px; }
+            .title-row { gap:10px; }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">town guns</div>
+        <div class="logo" id="site-logo">
+            town guns
+        </div>
         <div class="header-right">
-            <div class="search-container">
+            <div class="search-container" style="display:flex;align-items:center;">
                 <span class="search-icon">⌕</span>
-                <input type="text" class="search-box" placeholder="Search">
+                <input type="text" class="search-box" placeholder="Search (name / spawn / category)" />
             </div>
+
             <div class="header-icons">
+                <!-- hidden header hamburger kept for legacy; we hide it via CSS -->
                 <button class="icon-btn" id="hamburger">☰</button>
-                <button class="icon-btn">K</button>
+
+                <!-- THEME TOGGLE replaces the old "K" button -->
+                <button class="icon-btn" id="themeToggle" aria-label="Toggle day / night">🌙</button>
             </div>
         </div>
     </div>
+
     <div class="container">
         <nav class="sidebar" id="sidebar"></nav>
+
         <main class="main-content" id="main-content">
             <div class="content-area" id="page-content"></div>
         </main>
+
         <aside class="toc">
             <h4 class="toc-title"><span>≡</span>this page:</h4>
             <ul class="toc-list" id="toc-list">
@@ -110,2419 +185,2510 @@
                 <li class="toc-item"><a href="#" class="toc-link" data-toc="information">information:</a></li>
             </ul>
             <div id="toc-content" class="toc-content"></div>
-</aside>
+        </aside>
     </div>
+
+    <!-- easter egg modal -->
+    <div class="eg-overlay" id="eg-overlay" aria-hidden="true">
+        <div class="eg-modal" role="dialog" aria-modal="true">
+            <h2>i long to set it free</h2>
+            <p id="eg-message">i don't know what to do, just can't explain to you, i don't know what to say</p>
+            <div>
+                <button class="close" id="eg-close">oh, not another word</button>
+            </div>
+        </div>
+    </div>
+
     <script>
     // the big data....
     // beware!!! le epik data ahead!!!
-        const TOWN_GUNS = {
-        "": {
-            "category": "unknown",
-            "damage": [0,0],
-            "range": [0,0],
-            "fire_rate": "Rounds/Minute",
+            const TOWN_GUNS = {
+            "": {
+                "category": "unknown",
+                "damage": [0,0],
+                "range": [0,0],
+                "fire_rate": "Rounds/Minute",
+                "accuracy": 0,
+                "capacity": 0,
+                "vert_recoil": 0.0,
+                "hor_recoil": 0.0,
+                "head_mult": 1.0,
+                "torso_mult": 1.0,
+                "limb_mult": 1.0,
+                "reload": 0.0,
+                "equip": 0.0,
+                "aim": 0.0,
+                "weight": 0.0,
+                "mode": "",
+                "gamepass": true,
+                "spawn": "Not case sensitive"
+            },
+            "Name": {
+                "category": "unknown",
+                "damage": [0,0],
+                "range": [0,0],
+                "fire_rate": "Fire Rate",
+                "accuracy": 0,
+                "capacity": 0,
+                "vert_recoil": 0.0,
+                "hor_recoil": 0.0,
+                "head_mult": 1.0,
+                "torso_mult": 1.0,
+                "limb_mult": 1.0,
+                "reload": 0.0,
+                "equip": 0.0,
+                "aim": 0.0,
+                "weight": 0.0,
+                "mode": "Firing mode",
+                "gamepass": true,
+                "spawn": "Shortest name for spawning"
+            },
+                "AG-18c": {
+            "category": "pistol",
+            "damage": [
+            20,
+            10
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": 950,
+            "accuracy": 55-110,
+            "capacity": 24+1,
+            "vert_recoil": 0.45,
+            "hor_recoil": 0.25,
+            "head_mult": 8,
+            "torso_mult": 1.2,
+            "limb_mult": 0.5,
+            "reload": 2.45,
+            "equip": 0.6,
+            "aim": 0.2,
+            "weight": 2.25,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "AG-18"
+        },
+            "AG-19": {
+            "category": "pistol",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": 750,
+            "accuracy": 80-160,
+            "capacity": 17+1,
+            "vert_recoil": 0.35,
+            "hor_recoil": 0.35,
+            "head_mult": 7.5,
+            "torso_mult": 1.75,
+            "limb_mult": 0.5,
+            "reload": 2,
+            "equip": 0.4,
+            "aim": 0.2,
+            "weight": 2.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "AG"
+        },
+        "AK-15": {
+            "category": "assault_rifle",
+            "damage": [
+            36,
+            24
+            ],
+            "range": [
+            125,
+            300
+            ],
+            "fire_rate": 660,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.33,
+            "hor_recoil": 0.3,
+            "head_mult": 4.0,
+            "torso_mult": 1.0,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.45,
+            "aim": 0.2,
+            "weight": 7.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "AK-1"
+        },
+        "AK-47": {
+            "category": "assault_rifle",
+            "damage": [
+            35,
+            26
+            ],
+            "range": [
+            150,
+            350
+            ],
+            "fire_rate": 625,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.35,
+            "hor_recoil": 0.4,
+            "head_mult": 4.0,
+            "torso_mult": 1.0,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "AK"
+        },
+        "AR-10": {
+            "category": "assault_rifle",
+            "damage": [
+            45,
+            33
+            ],
+            "range": [
+            200,
+            400
+            ],
+            "fire_rate": 450,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.4,
+            "hor_recoil": 0.7,
+            "head_mult": 3.5,
+            "torso_mult": 1.3,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.65,
+            "aim": 0.35,
+            "weight": 9.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "A"
+        },
+        "AR-15": {
+            "category": "assault_rifle",
+            "damage": [
+            33,
+            23
+            ],
+            "range": [
+            0,
+            0
+            ],
+            "fire_rate": "750 (debatable)",
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.4,
+            "hor_recoil": 0.2,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.17,
+            "weight": 7.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "AR-15"
+        },
+        "AS VAL": {
+            "category": "assault_rifle",
+            "damage": [
+            40,
+            19
+            ],
+            "range": [
+            85,
+            190
+            ],
+            "fire_rate": 865,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.33,
+            "head_mult": 5.5,
+            "torso_mult": 0.78,
+            "limb_mult": 0.75,
+            "reload": 0.0,
+            "equip": 0.45,
+            "aim": 0.25,
+            "weight": 7.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "AS"
+        },
+        "AUG A3": {
+            "category": "assault_rifle",
+            "damage": [
+            33,
+            23
+            ],
+            "range": [
+            175,
+            350
+            ],
+            "fire_rate": 710,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.34,
+            "head_mult": 4.0,
+            "torso_mult": 0.7,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.75,
+            "aim": 0.3,
+            "weight": 9.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "AU"
+        },
+        "Barrett M82A3": {
+            "category": "sniper",
+            "damage": [
+            120,
+            75
+            ],
+            "range": [
+            250,
+            600
+            ],
+            "fire_rate": 170,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 1.1,
+            "hor_recoil": 1.5,
+            "head_mult": 5.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.6,
+            "reload": 0.0,
+            "equip": 1.4,
+            "aim": 0.6,
+            "weight": 30.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "BAR"
+        },
+        "Bryson Repeater": {
+            "category": "sniper",
+            "damage": [
+            46,
+            33
+            ],
+            "range": [
+            230,
+            450
+            ],
+            "fire_rate": 90,
+            "accuracy": 0,
+            "capacity": 8,
+            "vert_recoil": 0.77,
+            "hor_recoil": 0.3,
+            "head_mult": 5.0,
+            "torso_mult": 2.2,
+            "limb_mult": 1.1,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.2,
+            "weight": 8.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "B"
+        },
+        "Intervention": {
+            "category": "sniper",
+            "damage": [
+            100,
+            50
+            ],
+            "range": [
+            250,
+            600
+            ],
+            "fire_rate": 50,
+            "accuracy": 0,
+            "capacity": 7,
+            "vert_recoil": 0.95,
+            "hor_recoil": 0.95,
+            "head_mult": 5.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.85,
+            "reload": 0.0,
+            "equip": 1.5,
+            "aim": 0.5,
+            "weight": 30.0,
+            "mode": "Bolt Action",
+            "gamepass": false,
+            "spawn": "INT"
+        },
+        "Classic Pistol": {
+            "category": "pistol",
+            "damage": [
+            5
+            ],
+            "range": [
+            900
+            ],
+            "fire_rate": 600,
             "accuracy": 0,
             "capacity": 0,
             "vert_recoil": 0.0,
             "hor_recoil": 0.0,
-            "head_mult": 1.0,
+            "head_mult": 2.0,
             "torso_mult": 1.0,
             "limb_mult": 1.0,
             "reload": 0.0,
-            "equip": 0.0,
-            "aim": 0.0,
-            "weight": 0.0,
-            "mode": "",
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 3.0,
+            "mode": "Semi",
             "gamepass": true,
-            "spawn": "Not case sensitive"
+            "spawn": "CLA"
         },
-        "Name": {
-            "category": "unknown",
-            "damage": [0,0],
-            "range": [0,0],
-            "fire_rate": "Fire Rate",
+        "Cowboy Gun": {
+            "category": "pistol",
+            "damage": [
+            40,
+            20
+            ],
+            "range": [
+            150,
+            250
+            ],
+            "fire_rate": 300,
             "accuracy": 0,
-            "capacity": 0,
-            "vert_recoil": 0.0,
-            "hor_recoil": 0.0,
-            "head_mult": 1.0,
+            "capacity": 6,
+            "vert_recoil": 0.2,
+            "hor_recoil": 0.2,
+            "head_mult": 5.0,
+            "torso_mult": 3.0,
+            "limb_mult": 0.5,
+            "reload": 4.0,
+            "equip": 0.4,
+            "aim": 1.5,
+            "weight": 3.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "COW"
+        },
+        "CZ-75": {
+            "category": "pistol",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": 750,
+            "accuracy": 0,
+            "capacity": 15,
+            "vert_recoil": 0.4,
+            "hor_recoil": 0.4,
+            "head_mult": 5.0,
+            "torso_mult": 1.75,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 3.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "CZ"
+        },
+        "Desert Eagle": {
+            "category": "pistol",
+            "damage": [
+            70,
+            20
+            ],
+            "range": [
+            70,
+            250
+            ],
+            "fire_rate": 150,
+            "accuracy": 0,
+            "capacity": 7,
+            "vert_recoil": 1.0,
+            "hor_recoil": 1.5,
+            "head_mult": 5.0,
+            "torso_mult": 1.5,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.15,
+            "weight": 4.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "D"
+        },
+        "Double Barrel": {
+            "category": "shotgun",
+            "damage": [
+            0,
+            0
+            ],
+            "range": [
+            75,
+            200
+            ],
+            "fire_rate": "1000 (debatable)",
+            "accuracy": 0,
+            "capacity": 2,
+            "vert_recoil": 0.9,
+            "hor_recoil": 0.9,
+            "head_mult": 3.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.5,
+            "reload": 2.5,
+            "equip": 0.95,
+            "aim": 0.35,
+            "weight": 16.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "DO"
+        },
+        "Dragunov SVD": {
+            "category": "dmr",
+            "damage": [
+            80,
+            50
+            ],
+            "range": [
+            250,
+            600
+            ],
+            "fire_rate": 140,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.75,
+            "hor_recoil": 0.75,
+            "head_mult": 4.0,
+            "torso_mult": 1.25,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 1.0,
+            "aim": 0.45,
+            "weight": 10.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "DR"
+        },
+        "Fail": {
+            "category": "assault_rifle",
+            "damage": [
+            5,
+            4
+            ],
+            "range": [
+            200,
+            250
+            ],
+            "fire_rate": 600,
+            "accuracy": 0,
+            "capacity": 40,
+            "vert_recoil": 0.2,
+            "hor_recoil": 0.2,
+            "head_mult": 2.0,
             "torso_mult": 1.0,
             "limb_mult": 1.0,
             "reload": 0.0,
-            "equip": 0.0,
-            "aim": 0.0,
-            "weight": 0.0,
-            "mode": "Firing mode",
+            "equip": 0.6,
+            "aim": 0.1,
+            "weight": 8.0,
+            "mode": "Auto",
             "gamepass": true,
-            "spawn": "Shortest name for spawning"
+            "spawn": "FAI"
         },
-    "AK-15": {
-        "category": "assault_rifle",
-        "damage": [
-        36,
-        24
-        ],
-        "range": [
-        125,
-        300
-        ],
-        "fire_rate": 660,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.33,
-        "hor_recoil": 0.3,
-        "head_mult": 4.0,
-        "torso_mult": 1.0,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.45,
-        "aim": 0.2,
-        "weight": 7.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "AK-1"
-    },
-    "AK-47": {
-        "category": "assault_rifle",
-        "damage": [
-        35,
-        26
-        ],
-        "range": [
-        150,
-        350
-        ],
-        "fire_rate": 625,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.35,
-        "hor_recoil": 0.4,
-        "head_mult": 4.0,
-        "torso_mult": 1.0,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "AK"
-    },
-    "AR-10": {
-        "category": "assault_rifle",
-        "damage": [
-        45,
-        33
-        ],
-        "range": [
-        200,
-        400
-        ],
-        "fire_rate": 450,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.4,
-        "hor_recoil": 0.7,
-        "head_mult": 3.5,
-        "torso_mult": 1.3,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.65,
-        "aim": 0.35,
-        "weight": 9.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "A"
-    },
-    "AR-15": {
-        "category": "assault_rifle",
-        "damage": [
-        33,
-        23
-        ],
-        "range": [
-        0,
-        0
-        ],
-        "fire_rate": "750 (debatable)",
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.4,
-        "hor_recoil": 0.2,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.17,
-        "weight": 7.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "AR-15"
-    },
-    "AS VAL": {
-        "category": "assault_rifle",
-        "damage": [
-        40,
-        19
-        ],
-        "range": [
-        85,
-        190
-        ],
-        "fire_rate": 865,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.33,
-        "head_mult": 5.5,
-        "torso_mult": 0.78,
-        "limb_mult": 0.75,
-        "reload": 0.0,
-        "equip": 0.45,
-        "aim": 0.25,
-        "weight": 7.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "AS"
-    },
-    "AUG A3": {
-        "category": "assault_rifle",
-        "damage": [
-        33,
-        23
-        ],
-        "range": [
-        175,
-        350
-        ],
-        "fire_rate": 710,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.34,
-        "head_mult": 4.0,
-        "torso_mult": 0.7,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.75,
-        "aim": 0.3,
-        "weight": 9.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "AU"
-    },
-    "Barrett M82A3": {
-        "category": "sniper",
-        "damage": [
-        120,
-        75
-        ],
-        "range": [
-        250,
-        600
-        ],
-        "fire_rate": 170,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 1.1,
-        "hor_recoil": 1.5,
-        "head_mult": 5.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.6,
-        "reload": 0.0,
-        "equip": 1.4,
-        "aim": 0.6,
-        "weight": 30.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "BAR"
-    },
-    "Bryson Repeater": {
-        "category": "sniper",
-        "damage": [
-        46,
-        33
-        ],
-        "range": [
-        230,
-        450
-        ],
-        "fire_rate": 90,
-        "accuracy": 0,
-        "capacity": 8,
-        "vert_recoil": 0.77,
-        "hor_recoil": 0.3,
-        "head_mult": 5.0,
-        "torso_mult": 2.2,
-        "limb_mult": 1.1,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.2,
-        "weight": 8.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "B"
-    },
-    "Intervention": {
-        "category": "sniper",
-        "damage": [
-        100,
-        50
-        ],
-        "range": [
-        250,
-        600
-        ],
-        "fire_rate": 50,
-        "accuracy": 0,
-        "capacity": 7,
-        "vert_recoil": 0.95,
-        "hor_recoil": 0.95,
-        "head_mult": 5.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.85,
-        "reload": 0.0,
-        "equip": 1.5,
-        "aim": 0.5,
-        "weight": 30.0,
-        "mode": "Bolt Action",
-        "gamepass": false,
-        "spawn": "INT"
-    },
-    "Classic Pistol": {
-        "category": "pistol",
-        "damage": [
-        5
-        ],
-        "range": [
-        900
-        ],
-        "fire_rate": 600,
-        "accuracy": 0,
-        "capacity": 0,
-        "vert_recoil": 0.0,
-        "hor_recoil": 0.0,
-        "head_mult": 2.0,
-        "torso_mult": 1.0,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 3.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "CLA"
-    },
-    "Cowboy Gun": {
-        "category": "pistol",
-        "damage": [
-        40,
-        20
-        ],
-        "range": [
-        150,
-        250
-        ],
-        "fire_rate": 300,
-        "accuracy": 0,
-        "capacity": 6,
-        "vert_recoil": 0.2,
-        "hor_recoil": 0.2,
-        "head_mult": 5.0,
-        "torso_mult": 3.0,
-        "limb_mult": 0.5,
-        "reload": 4.0,
-        "equip": 0.4,
-        "aim": 1.5,
-        "weight": 3.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "COW"
-    },
-    "CZ-75": {
-        "category": "pistol",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        250
-        ],
-        "fire_rate": 750,
-        "accuracy": 0,
-        "capacity": 15,
-        "vert_recoil": 0.4,
-        "hor_recoil": 0.4,
-        "head_mult": 5.0,
-        "torso_mult": 1.75,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 3.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "CZ"
-    },
-    "Desert Eagle": {
-        "category": "pistol",
-        "damage": [
-        70,
-        20
-        ],
-        "range": [
-        70,
-        250
-        ],
-        "fire_rate": 150,
-        "accuracy": 0,
-        "capacity": 7,
-        "vert_recoil": 1.0,
-        "hor_recoil": 1.5,
-        "head_mult": 5.0,
-        "torso_mult": 1.5,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.15,
-        "weight": 4.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "D"
-    },
-    "Double Barrel": {
-        "category": "pistol",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        75,
-        200
-        ],
-        "fire_rate": "1000 (debatable)",
-        "accuracy": 0,
-        "capacity": 2,
-        "vert_recoil": 0.9,
-        "hor_recoil": 0.9,
-        "head_mult": 3.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.5,
-        "reload": 2.5,
-        "equip": 0.95,
-        "aim": 0.35,
-        "weight": 16.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "DO"
-    },
-    "Dragunov SVD": {
-        "category": "dmr",
-        "damage": [
-        80,
-        50
-        ],
-        "range": [
-        250,
-        600
-        ],
-        "fire_rate": 140,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.75,
-        "hor_recoil": 0.75,
-        "head_mult": 4.0,
-        "torso_mult": 1.25,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 1.0,
-        "aim": 0.45,
-        "weight": 10.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "DR"
-    },
-    "Fail": {
-        "category": "assault_rifle",
-        "damage": [
-        5,
-        4
-        ],
-        "range": [
-        200,
-        250
-        ],
-        "fire_rate": 600,
-        "accuracy": 0,
-        "capacity": 40,
-        "vert_recoil": 0.2,
-        "hor_recoil": 0.2,
-        "head_mult": 2.0,
-        "torso_mult": 1.0,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.1,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": true,
-        "spawn": "FAI"
-    },
-    "FAMAS G2": {
-        "category": "unknown",
-        "damage": [
-        33,
-        23
-        ],
-        "range": [
-        150,
-        350
-        ],
-        "fire_rate": "863.31",
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.33,
-        "hor_recoil": 0.26,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Burst",
-        "gamepass": false,
-        "spawn": "FA"
-    },
-    "Five SeveN": {
-        "category": "pistol",
-        "damage": [
-        27,
-        11
-        ],
-        "range": [
-        100,
-        250
-        ],
-        "fire_rate": "750 (debatable)",
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.25,
-        "head_mult": 3.8,
-        "torso_mult": 0.9,
-        "limb_mult": 0.6,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 2.5,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "Fi"
-    },
-    "FN FAL": {
-        "category": "assault_rifle",
-        "damage": [
-        65,
-        51
-        ],
-        "range": [
-        225,
-        400
-        ],
-        "fire_rate": 500,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.45,
-        "hor_recoil": 0.8,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.75,
-        "aim": 0.45,
-        "weight": 15.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "FN"
-    },
-    "G36C": {
-        "category": "assault_rifle",
-        "damage": [
-        40,
-        30
-        ],
-        "range": [
-        150,
-        350
-        ],
-        "fire_rate": 750,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.32,
-        "hor_recoil": 0.26,
-        "head_mult": 3.0,
-        "torso_mult": 0.7,
-        "limb_mult": 0.3,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.25,
-        "weight": 6.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "G3"
-    },
-    "G3A3": {
-        "category": "assault_rifle",
-        "damage": [
-        53,
-        44
-        ],
-        "range": [
-        175,
-        400
-        ],
-        "fire_rate": 480,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.6,
-        "hor_recoil": 0.25,
-        "head_mult": 4.0,
-        "torso_mult": 0.9,
-        "limb_mult": 0.55,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.3,
-        "weight": 12.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "G3A"
-    },
-    "Groza-4": {
-        "category": "assault_rifle",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        150,
-        275
-        ],
-        "fire_rate": 750,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.3,
-        "head_mult": 5.5,
-        "torso_mult": 0.85,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": true,
-        "spawn": "GRO"
-    },
-    "HK416": {
-        "category": "assault_rifle",
-        "damage": [
-        40,
-        30
-        ],
-        "range": [
-        150,
-        350
-        ],
-        "fire_rate": 780,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.35,
-        "hor_recoil": 0.28,
-        "head_mult": 3.0,
-        "torso_mult": 0.7,
-        "limb_mult": 0.3,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 9.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "HK"
-    },
-    "Honey Badger": {
-        "category": "smg",
-        "damage": [
-        30,
-        15
-        ],
-        "range": [
-        130,
-        275
-        ],
-        "fire_rate": 800,
-        "accuracy": 50,
-        "capacity": 30,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.45,
-        "head_mult": 4,
-        "torso_mult": 1.1,
-        "limb_mult": 0.8,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.2,
-        "weight": 6.5,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "HON"
-    },
-    "HW Cappa": {
-        "category": "pistol",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        50,
-        150
-        ],
-        "fire_rate": 500,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.5,
-        "hor_recoil": 0.5,
-        "head_mult": 6.0,
-        "torso_mult": 2.6,
-        "limb_mult": 1.25,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 2.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "HWC"
-    },
-    "HW Jolt": {
-        "category": "smg",
-        "damage": [
-        19,
-        9
-        ],
-        "range": [
-        100,
-        200
-        ],
-        "fire_rate": 670,
-        "accuracy": 0,
-        "capacity": 24,
-        "vert_recoil": 0.27,
-        "hor_recoil": 0.41,
-        "head_mult": 6.0,
-        "torso_mult": 1.5,
-        "limb_mult": 1.2,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.3,
-        "weight": 4.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "HWJ"
-    },
-    "HW Pulper": {
-        "category": "shotgun",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        35,
-        85
-        ],
-        "fire_rate": 74,
-        "accuracy": 24,
-        "capacity": 6,
-        "vert_recoil": 0.8,
-        "hor_recoil": 0.75,
-        "head_mult": 4.0,
-        "torso_mult": 2.5,
-        "limb_mult": 2.0,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.25,
-        "weight": 6.0,
-        "mode": "Pump Action",
-        "gamepass": true,
-        "spawn": "HW"
-    },
-    "HW Spear": {
-        "category": "pistol",
-        "damage": [
-        25,
-        16
-        ],
-        "range": [
-        100,
-        280
-        ],
-        "fire_rate": 400,
-        "accuracy": 0,
-        "capacity": 16,
-        "vert_recoil": 0.6,
-        "hor_recoil": 0.6,
-        "head_mult": 5.0,
-        "torso_mult": 2.6,
-        "limb_mult": 2.0,
-        "reload": 0.0,
-        "equip": 0.5,
-        "aim": 0.34,
-        "weight": 4.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "HWS"
-    },
-    "Ithaca 37 Stakeout": {
-        "category": "shotgun",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        40,
-        100
-        ],
-        "fire_rate": 75,
-        "accuracy": 30,
-        "capacity": 5,
-        "vert_recoil": 0.8,
-        "hor_recoil": 0.75,
-        "head_mult": 3.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.9,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.25,
-        "weight": 6.0,
-        "mode": "Pump Action",
-        "gamepass": true,
-        "spawn": "I"
-    },
-    "JNG-90": {
-        "category": "sniper",
-        "damage": [
-        55,
-        40
-        ],
-        "range": [
-        250,
-        600
-        ],
-        "fire_rate": 75,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.8,
-        "hor_recoil": 0.35,
-        "head_mult": 10.0,
-        "torso_mult": 1.25,
-        "limb_mult": 0.92,
-        "reload": 0.0,
-        "equip": 0.8,
-        "aim": 0.35,
-        "weight": 10.0,
-        "mode": "Bolt Action",
-        "gamepass": false,
-        "spawn": "JN"
-    },
-    "KRISS Vector": {
-        "category": "smg",
-        "damage": [
-        20,
-        10
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 1000,
-        "accuracy": 0,
-        "capacity": 33,
-        "vert_recoil": 0.2,
-        "hor_recoil": 0.5,
-        "head_mult": 8.0,
-        "torso_mult": 1.5,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": true,
-        "spawn": "KR"
-    },
-    "L85A2": {
-        "category": "assault_rifle",
-        "damage": [
-        33,
-        23
-        ],
-        "range": [
-        150,
-        350
-        ],
-        "fire_rate": 700,
-        "accuracy": 0,
-        "capacity": 40,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.3,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.8,
-        "aim": 0.3,
-        "weight": 10.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "L"
-    },
-    "L96A1": {
-        "category": "sniper",
-        "damage": [
-        85,
-        35
-        ],
-        "range": [
-        250,
-        600
-        ],
-        "fire_rate": 40,
-        "accuracy": 0,
-        "capacity": 5,
-        "vert_recoil": 0.6,
-        "hor_recoil": 0.6,
-        "head_mult": 6.0,
-        "torso_mult": 2.3,
-        "limb_mult": 0.8,
-        "reload": 0.0,
-        "equip": 1.0,
-        "aim": 0.45,
-        "weight": 14.0,
-        "mode": "Bolt Action",
-        "gamepass": false,
-        "spawn": "L9"
-    },
-    "Lee Enfield": {
-        "category": "sniper",
-        "damage": [
-        54,
-        38
-        ],
-        "range": [
-        200,
-        400
-        ],
-        "fire_rate": 55,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.6,
-        "hor_recoil": 0.6,
-        "head_mult": 5.0,
-        "torso_mult": 1.9,
-        "limb_mult": 0.8,
-        "reload": 0.0,
-        "equip": 0.8,
-        "aim": 0.4,
-        "weight": 8.0,
-        "mode": "Bolt Action",
-        "gamepass": false,
-        "spawn": "LEE"
-    },
-    "Lewis Automatic Rifle": {
-        "category": "LMG",
-        "damage": [
-        30,
-        20
-        ],
-        "range": [
-        175,
-        400
-        ],
-        "fire_rate": 550,
-        "accuracy": 0,
-        "capacity": 97,
-        "vert_recoil": 0.35,
-        "hor_recoil": 0.6,
-        "head_mult": 4.0,
-        "torso_mult": 1.5,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 1.75,
-        "aim": 0.3,
-        "weight": 30.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "LE"
-    },
-    "Luger P08": {
-        "category": "pistol",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        250
-        ],
-        "fire_rate": "600 (debatable)",
-        "accuracy": 0,
-        "capacity": 8,
-        "vert_recoil": 0.4,
-        "hor_recoil": 0.4,
-        "head_mult": 5.0,
-        "torso_mult": 1.75,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 2.5,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "LU"
-    },
-    "M1 Garand": {
-        "category": "dmr",
-        "damage": [
-        60,
-        45
-        ],
-        "range": [
-        200,
-        400
-        ],
-        "fire_rate": 300,
-        "accuracy": 0,
-        "capacity": 8,
-        "vert_recoil": 0.8,
-        "hor_recoil": 0.8,
-        "head_mult": 2.5,
-        "torso_mult": 1.7,
-        "limb_mult": 1.0,
-        "reload": 1.0,
-        "equip": 0.6,
-        "aim": 0.3,
-        "weight": 12.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "M1G"
-    },
-    "M16A2": {
-        "category": "assault_rifle",
-        "damage": [
-        20,
-        16
-        ],
-        "range": [
-        130,
-        375
-        ],
-        "fire_rate": 800,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.29,
-        "hor_recoil": 0.36,
-        "head_mult": 6.0,
-        "torso_mult": 1.7,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 0.5,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "M16"
-    },
-    "M1911": {
-        "category": "pistol",
-        "damage": [
-        25,
-        15
-        ],
-        "range": [
-        75,
-        140
-        ],
-        "fire_rate": "750 (debatable)",
-        "accuracy": 0,
-        "capacity": 7,
-        "vert_recoil": 0.48,
-        "hor_recoil": 0.19,
-        "head_mult": 7.5,
-        "torso_mult": 3.0,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.26,
-        "aim": 0.17,
-        "weight": 2.5,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "M1"
-    },
-    "M1921 Thompson": {
-        "category": "smg",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 720,
-        "accuracy": 0,
-        "capacity": 50,
-        "vert_recoil": 0.2,
-        "hor_recoil": 0.65,
-        "head_mult": 7.5,
-        "torso_mult": 1.75,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.3,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": true,
-        "spawn": "M192"
-    },
-    "M26 MASS": {
-        "category": "shotgun",
-        "damage": [
-        60,
-        30
-        ],
-        "range": [
-        225,
-        400
-        ],
-        "fire_rate": 120,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.9,
-        "hor_recoil": 0.9,
-        "head_mult": 4.0,
-        "torso_mult": 1.75,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.3,
-        "weight": 6.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "M2"
-    },
-    "M4 Carbine": {
-        "category": "assault_rifle",
-        "damage": [
-        33,
-        23
-        ],
-        "range": [
-        150,
-        350
-        ],
-        "fire_rate": 800,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.3,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "M4"
-    },
-    "M9": {
-        "category": "pistol",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        150,
-        250
-        ],
-        "fire_rate": 750,
-        "accuracy": 0,
-        "capacity": 15,
-        "vert_recoil": 0.4,
-        "hor_recoil": 0.4,
-        "head_mult": 5.0,
-        "torso_mult": 1.75,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 2.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "M9"
-    },
-    "MAC-10": {
-        "category": "smg",
-        "damage": [
-        20,
-        10
-        ],
-        "range": [
-        50,
-        250
-        ],
-        "fire_rate": 1000,
-        "accuracy": 0,
-        "capacity": 31,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.7,
-        "head_mult": 6.5,
-        "torso_mult": 1.0,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 4.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MAC"
-    },
-    "Magnum Revolver": {
-        "category": "pistol",
-        "damage": [
-        40,
-        35
-        ],
-        "range": [
-        50,
-        250
-        ],
-        "fire_rate": 140,
-        "accuracy": 0,
-        "capacity": 6,
-        "vert_recoil": 0.8,
-        "hor_recoil": 0.8,
-        "head_mult": 5.0,
-        "torso_mult": 2.5,
-        "limb_mult": 0.75,
-        "reload": 3.0,
-        "equip": 0.4,
-        "aim": 0.15,
-        "weight": 3.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "MAG"
-    },
-    "Makarov": {
-        "category": "pistol",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        250
-        ],
-        "fire_rate": "750 (debatable)",
-        "accuracy": 0,
-        "capacity": 8,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.3,
-        "head_mult": 5.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.2,
-        "aim": 0.1,
-        "weight": 2.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "MAK"
-    },
-    "MCX LVAW": {
-        "category": "assault_rifle",
-        "damage": [
-        30,
-        15
-        ],
-        "range": [
-        110,
-        230
-        ],
-        "fire_rate": 815,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.28,
-        "hor_recoil": 0.29,
-        "head_mult": 4.0,
-        "torso_mult": 1.1,
-        "limb_mult": 0.8,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 7.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MC"
-    },
-    "MG4": {
-        "category": "LMG",
-        "damage": [
-        33,
-        23
-        ],
-        "range": [
-        175,
-        400
-        ],
-        "fire_rate": 700,
-        "accuracy": 0,
-        "capacity": 100,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.4,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 7.5,
-        "equip": 1.0,
-        "aim": 0.5,
-        "weight": 32.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MG"
-    },
-    "MK 17 CQC": {
-        "category": "assault_rifle",
-        "damage": [
-        40,
-        30
-        ],
-        "range": [
-        175,
-        300
-        ],
-        "fire_rate": 620,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.45,
-        "hor_recoil": 0.6,
-        "head_mult": 4.0,
-        "torso_mult": 1.4,
-        "limb_mult": 0.75,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MK"
-    },
-    "MK-11": {
-        "category": "pistol",
-        "damage": [
-        45,
-        30
-        ],
-        "range": [
-        250,
-        500
-        ],
-        "fire_rate": 400,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.45,
-        "hor_recoil": 0.8,
-        "head_mult": 4.0,
-        "torso_mult": 1.7,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.5,
-        "aim": 0.35,
-        "weight": 12.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "MK-1"
-    },
-    "Model 1777 Musket": {
-        "category": "misc",
-        "damage": [
-        65,
-        40
-        ],
-        "range": [
-        250,
-        500
-        ],
-        "fire_rate": 6,
-        "accuracy": 0,
-        "capacity": 1,
-        "vert_recoil": 0.5,
-        "hor_recoil": 0.5,
-        "head_mult": 6.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.5,
-        "reload": 10.0,
-        "equip": 1.25,
-        "aim": 0.5,
-        "weight": 15.0,
-        "mode": "Flintlock",
-        "gamepass": false,
-        "spawn": "M"
-    },
-    "MP40": {
-        "category": "smg",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 575,
-        "accuracy": 0,
-        "capacity": 31,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.45,
-        "head_mult": 5.0,
-        "torso_mult": 1.25,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MP40"
-    },
-    "MP443": {
-        "category": "pistol",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        250
-        ],
-        "fire_rate": 750,
-        "accuracy": 0,
-        "capacity": 12,
-        "vert_recoil": 0.4,
-        "hor_recoil": 0.4,
-        "head_mult": 5.0,
-        "torso_mult": 1.75,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 2.5,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "MP"
-    },
-    "MP5A2": {
-        "category": "smg",
-        "damage": [
-        14,
-        8
-        ],
-        "range": [
-        130,
-        270
-        ],
-        "fire_rate": 815,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.27,
-        "hor_recoil": 0.21,
-        "head_mult": 8.0,
-        "torso_mult": 2.1,
-        "limb_mult": 1.4,
-        "reload": 0.0,
-        "equip": 0.5,
-        "aim": 0.15,
-        "weight": 5.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MP5A"
-    },
-    "MP5K": {
-        "category": "smg",
-        "damage": [
-        18,
-        9
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 885,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.45,
-        "head_mult": 8.0,
-        "torso_mult": 1.5,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.15,
-        "weight": 4.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MP5"
-    },
-    "MP7": {
-        "category": "smg",
-        "damage": [
-        29,
-        22
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 860,
-        "accuracy": 0,
-        "capacity": 40,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.37,
-        "head_mult": 4.0,
-        "torso_mult": 1.0,
-        "limb_mult": 0.6,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.25,
-        "weight": 5.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MP7"
-    },
-    "MPX": {
-        "category": "smg",
-        "damage": [
-        25,
-        18
-        ],
-        "range": [
-        120,
-        200
-        ],
-        "fire_rate": 800,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.38,
-        "hor_recoil": 0.19,
-        "head_mult": 6.0,
-        "torso_mult": 1.2,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 0.5,
-        "aim": 0.2,
-        "weight": 6.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "MPX"
-    },
-    "Nail Gun": {
-        "category": "misc",
-        "damage": [
-        15,
-        1
-        ],
-        "range": [
-        8,
-        20
-        ],
-        "fire_rate": 600,
-        "accuracy": 0,
-        "capacity": 60,
-        "vert_recoil": 0.05,
-        "hor_recoil": 0.05,
-        "head_mult": 10.0,
-        "torso_mult": 1.0,
-        "limb_mult": 1.0,
-        "reload": 4.0,
-        "equip": 0.6,
-        "aim": 0.15,
-        "weight": 10.0,
-        "mode": "Auto",
-        "gamepass": true,
-        "spawn": "NA"
-    },
-    "Olympia": {
-        "category": "shotgun",
-        "damage": [
-        95,
-        40
-        ],
-        "range": [
-        75,
-        200
-        ],
-        "fire_rate": 1200,
-        "accuracy": 0,
-        "capacity": 2,
-        "vert_recoil": 0.95,
-        "hor_recoil": 0.95,
-        "head_mult": 4.0,
-        "torso_mult": 3.5,
-        "limb_mult": 0.6,
-        "reload": 0.0,
-        "equip": 0.7,
-        "aim": 0.3,
-        "weight": 12.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "OL"
-    },
-    "P226": {
-        "category": "pistol",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        250
-        ],
-        "fire_rate": "750 (debatable)",
-        "accuracy": 0,
-        "capacity": 15,
-        "vert_recoil": 0.4,
-        "hor_recoil": 0.4,
-        "head_mult": 5.0,
-        "torso_mult": 1.75,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 2.5,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "P2"
-    },
-    "P90": {
-        "category": "smg",
-        "damage": [
-        27,
-        21
-        ],
-        "range": [
-        125,
-        270
-        ],
-        "fire_rate": 910,
-        "accuracy": 0,
-        "capacity": 50,
-        "vert_recoil": 0.26,
-        "hor_recoil": 0.35,
-        "head_mult": 3.8,
-        "torso_mult": 0.9,
-        "limb_mult": 0.6,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "P9"
-    },
-    "Pipe Shotgun": {
-        "category": "shotgun",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        20,
-        50
-        ],
-        "fire_rate": 750,
-        "accuracy": 9,
-        "capacity": 1,
-        "vert_recoil": 1.1,
-        "hor_recoil": 0.7,
-        "head_mult": 3.0,
-        "torso_mult": 2.0,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.32,
-        "weight": 8.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "P"
-    },
-    "PP2000": {
-        "category": "smg",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 760,
-        "accuracy": 0,
-        "capacity": 40,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.28,
-        "head_mult": 6.0,
-        "torso_mult": 1.5,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.25,
-        "weight": 3.0,
-        "mode": "Auto",
-        "gamepass": true,
-        "spawn": "PPS"
-    },
-    "PPSH-41": {
-        "category": "smg",
-        "damage": [
-        20,
-        10
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 1000,
-        "accuracy": 0,
-        "capacity": 71,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.4,
-        "head_mult": 6.0,
-        "torso_mult": 0.9,
-        "limb_mult": 0.75,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 10.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "PPS"
-    },
-    "QBU-88": {
-        "category": "dmr",
-        "damage": [
-        40,
-        30
-        ],
-        "range": [
-        280,
-        500
-        ],
-        "fire_rate": 450,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.45,
-        "hor_recoil": 0.5,
-        "head_mult": 5.0,
-        "torso_mult": 1.25,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 9.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "QBU"
-    },
-    "QBZ-95": {
-        "category": "assault_rifle",
-        "damage": [
-        33,
-        23
-        ], /* itsudemo I love you, kimi ni take kiss me */
-        "range": [
-        190,
-        350
-        ],
-        "fire_rate": 670,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.32,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 9.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "Q"
-    },
-    "R700 Hunter": {
-        "category": "sniper",
-        "damage": [
-        70,
-        45
-        ],
-        "range": [
-        200,
-        450
-        ],
-        "fire_rate": 44,
-        "accuracy": 0,
-        "capacity": 5,
-        "vert_recoil": 0.6,
-        "hor_recoil": 0.6,
-        "head_mult": 5.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.8,
-        "reload": 0.0,
-        "equip": 0.8,
-        "aim": 0.4,
-        "weight": 10.0,
-        "mode": "Bolt Action",
-        "gamepass": false,
-        "spawn": "R7"
-    },
-    "M870": {
-        "category": "shotgun",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        50,
-        125
-        ],
-        "fire_rate": 60,
-        "accuracy": 45,
-        "capacity": 8,
-        "vert_recoil": 1.0,
-        "hor_recoil": 1.0,
-        "head_mult": 3.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.75,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 10.0,
-        "mode": "Pump Action",
-        "gamepass": false,
-        "spawn": "M8"
-    },
-    "RFB": {
-        "category": "dmr",
-        "damage": [
-        45,
-        34
-        ],
-        "range": [
-        250,
-        500
-        ],
-        "fire_rate": 600,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.55,
-        "hor_recoil": 0.55,
-        "head_mult": 4.0,
-        "torso_mult": 1.4,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 10.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "RF"
-    },
-    "RPK": {
-        "category": "assault_rifle",
-        "damage": [
-        32,
-        26
-        ],
-        "range": [
-        175,
-        400
-        ],
-        "fire_rate": 600,
-        "accuracy": 140,
-        "capacity": 45,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.25,
-        "head_mult": 4.0,
-        "torso_mult": 1.0,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.75,
-        "aim": 0.3,
-        "weight": 16.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "RP"
-    },
-    "RPK-74": {
-        "category": "assault_rifle",
-        "damage": [
-        35,
-        29
-        ],
-        "range": [
-        250,
-        400
-        ],
-        "fire_rate": 580,
-        "accuracy": 0,
-        "capacity": 75,
-        "vert_recoil": 0.29,
-        "hor_recoil": 0.4,
-        "head_mult": 4.0,
-        "torso_mult": 0.75,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 1.0,
-        "aim": 0.6,
-        "weight": 22.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "RPK-"
-    },
-    "RMK2": {
-        "category": "pistol",
-        "damage": [
-        6,
-        4
-        ],
-        "range": [
-        50,
-        150
-        ],
-        "fire_rate": "1000 (debatable)",
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.08,
-        "head_mult": 17.0,
-        "torso_mult": 4.0,
-        "limb_mult": 1.9,
-        "reload": 0.0,
-        "equip": 0.3,
-        "aim": 0.1,
-        "weight": 3.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "RM"
-    },
-    "Saddlegun": {
-        "category": "misc",
-        "damage": [
-        55,
-        22
-        ],
-        "range": [
-        60,
-        180
-        ],
-        "fire_rate": "100 (faster hipfire)",
-        "accuracy": 0,
-        "capacity": 5,
-        "vert_recoil": 0.65,
-        "hor_recoil": 0.65,
-        "head_mult": 9.0,
-        "torso_mult": 1.6,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.2,
-        "weight": 4.0,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "SA"
-    },
-    "Saiga 12K": {
-        "category": "shotgun",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        75,
-        200
-        ],
-        "fire_rate": 500,
-        "accuracy": 0,
-        "capacity": 5,
-        "vert_recoil": 0.65,
-        "hor_recoil": 0.8,
-        "head_mult": 10.0,
-        "torso_mult": 5.0,
-        "limb_mult": 5.0,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 8.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "SAI"
-    },
-    "SCAR-H": {
-        "category": "assault_rifle",
-        "damage": [
-        45,
-        33
-        ],
-        "range": [
-        0,
-        0
-        ],
-        "fire_rate": 600,
-        "accuracy": 0,
-        "capacity": 20,
-        "vert_recoil": 0.35,
-        "hor_recoil": 0.57,
-        "head_mult": 3.56,
-        "torso_mult": 1.24,
-        "limb_mult": 0.67,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 10.0,
-        "mode": "Auto",
-        "gamepass": true,
-        "spawn": "SCA"
-    },
-    "Scorpion EVO": {
-        "category": "smg",
-        "damage": [
-        18,
-        9
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 900,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.29,
-        "hor_recoil": 0.22,
-        "head_mult": 8.0,
-        "torso_mult": 1.2,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.45,
-        "aim": 0.15,
-        "weight": 6.0,
-        "mode": "Auto",
-        "gamepass": true,
-        "spawn": "SC"
-    },
-    "SG-552 Commando": {
-        "category": "assault_rifle",
-        "damage": [
-        33,
-        23
-        ],
-        "range": [
-        150,
-        275
-        ],
-        "fire_rate": 800,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.3,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.35,
-        "aim": 0.2,
-        "weight": 6.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "SG"
-    },
-    "SKS": {
-        "category": "dmr",
-        "damage": [
-        40,
-        30
-        ],
-        "range": [
-        175,
-        400
-        ],
-        "fire_rate": 600,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.45,
-        "hor_recoil": 0.45,
-        "head_mult": 4.85,
-        "torso_mult": 1.6,
-        "limb_mult": 0.8,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.5,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "SK"
-    },
-    "SOPMOD Block II": {
-        "category": "assault_rifle",
-        "damage": [
-        33,
-        23
-        ],
-        "range": [
-        150,
-        350
-        ],
-        "fire_rate": 800,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.3,
-        "head_mult": 4.0,
-        "torso_mult": 0.8,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "SO"
-    },
-    "SPAS-12": {
-        "category": "shotgun",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        75,
-        200
-        ],
-        "fire_rate": 240,
-        "accuracy": 25,
-        "capacity": 8,
-        "vert_recoil": 0.7,
-        "hor_recoil": 0.9,
-        "head_mult": 3.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.5,
-        "reload": 1.0,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 12.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "SP"
-    },
-    "SR-2M": {
-        "category": "smg",
-        "damage": [
-        33,
-        25
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 900,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.31,
-        "hor_recoil": 0.24,
-        "head_mult": 4.0,
-        "torso_mult": 0.85,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.3,
-        "weight": 4.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "SR",
-        "adrev": "fuck you adrev btw"
-    },
-    "Steyr Elite": {
-        "category": "sniper",
-        "damage": [
-        70,
-        30
-        ],
-        "range": [
-        200,
-        600
-        ],
-        "fire_rate": 55,
-        "accuracy": 0,
-        "capacity": 10,
-        "vert_recoil": 0.4,
-        "hor_recoil": 0.1,
-        "head_mult": 3.5,
-        "torso_mult": 1.5,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 1.0,
-        "aim": 0.45,
-        "weight": 4.5,
-        "mode": "Bolt Action",
-        "gamepass": false,
-        "spawn": "ST"
-    },
-    "TMP": {
-        "category": "smg",
-        "damage": [
-        18,
-        9
-        ],
-        "range": [
-        100,
-        250
-        ],
-        "fire_rate": 850,
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.45,
-        "head_mult": 8.0,
-        "torso_mult": 1.5,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "TM"
-    },
-    "Tumor Growth": {
-        "category": "misc",
-        "damage": [
-        20,
-        15
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": "666.67",
-        "accuracy": 0,
-        "capacity": 30,
-        "vert_recoil": 0.25,
-        "hor_recoil": 0.6,
-        "head_mult": 1.2,
-        "torso_mult": 1.0,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 5.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "T"
-    },
-    "UMP-45": {
-        "category": "smg",
-        "damage": [
-        25,
-        15
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 700,
-        "accuracy": 0,
-        "capacity": 25,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.3,
-        "head_mult": 5.0,
-        "torso_mult": 1.5,
-        "limb_mult": 0.8,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.25,
-        "weight": 5.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "U"
-    },
-    "UNICA 6": {
-        "category": "pistol",
-        "damage": [
-        52,
-        45
-        ],
-        "range": [
-        150,
-        250
-        ],
-        "fire_rate": 140,
-        "accuracy": 0,
-        "capacity": 6,
-        "vert_recoil": 0.65,
-        "hor_recoil": 0.25,
-        "head_mult": 5.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.5,
-        "reload": 2.75,
-        "equip": 0.4,
-        "aim": 0.15,
-        "weight": 3.5,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "UN"
-    },
-    "USP Match": {
-        "category": "pistol",
-        "damage": [
-        25,
-        15
-        ],
-        "range": [
-        60,
-        110
-        ],
-        "fire_rate": 590,
-        "accuracy": 0,
-        "capacity": 13,
-        "vert_recoil": 0.37,
-        "hor_recoil": 0.6,
-        "head_mult": 7.5,
-        "torso_mult": 1.5,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 2.5,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "USPMA"
-    },
-    "USP MK23": {
-        "category": "pistol",
-        "damage": [
-        25,
-        15
-        ],
-        "range": [
-        100,
-        250
-        ],
-        "fire_rate": 550,
-        "accuracy": 0,
-        "capacity": 12,
-        "vert_recoil": 0.3,
-        "hor_recoil": 0.6,
-        "head_mult": 7.5,
-        "torso_mult": 1.5,
-        "limb_mult": 0.5,
-        "reload": 0.0,
-        "equip": 0.4,
-        "aim": 0.1,
-        "weight": 2.5,
-        "mode": "Semi",
-        "gamepass": false,
-        "spawn": "US"
-    },
-    "UTS-15": {
-        "category": "shotgun",
-        "damage": [
-        0,
-        0
-        ],
-        "range": [
-        75,
-        200
-        ],
-        "fire_rate": 85,
-        "accuracy": 30,
-        "capacity": 14,
-        "vert_recoil": 0.6,
-        "hor_recoil": 0.6,
-        "head_mult": 3.0,
-        "torso_mult": 2.0,
-        "limb_mult": 0.5,
-        "reload": 0.85,
-        "equip": 0.6,
-        "aim": 0.35,
-        "weight": 12.0,
-        "mode": "Pump Action",
-        "gamepass": true,
-        "spawn": "UT"
-    },
-    "Uzi": {
-        "category": "smg",
-        "damage": [
-        25,
-        20
-        ],
-        "range": [
-        100,
-        225
-        ],
-        "fire_rate": 650,
-        "accuracy": 0,
-        "capacity": 25,
-        "vert_recoil": 0.2,
-        "hor_recoil": 0.7,
-        "head_mult": 5.5,
-        "torso_mult": 1.5,
-        "limb_mult": 0.8,
-        "reload": 0.0,
-        "equip": 0.6,
-        "aim": 0.25,
-        "weight": 8.0,
-        "mode": "Auto",
-        "gamepass": false,
-        "spawn": "UZ"
-    },
-    "Walther WA2000": {
-        "category": "dmr",
-        "damage": [
-        80,
-        60
-        ],
-        "range": [
-        300,
-        600
-        ],
-        "fire_rate": 90,
-        "accuracy": 0,
-        "capacity": 5,
-        "vert_recoil": 0.9,
-        "hor_recoil": 0.7,
-        "head_mult": 5.0,
-        "torso_mult": 1.5,
-        "limb_mult": 1.0,
-        "reload": 0.0,
-        "equip": 1.25,
-        "aim": 0.45,
-        "weight": 18.0,
-        "mode": "Semi",
-        "gamepass": true,
-        "spawn": "WA"
-    }
-};
+        "FAMAS G2": {
+            "category": "assault_rifle",
+            "damage": [
+            33,
+            23
+            ],
+            "range": [
+            150,
+            350
+            ],
+            "fire_rate": "863.31",
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.33,
+            "hor_recoil": 0.26,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Burst",
+            "gamepass": false,
+            "spawn": "FA"
+        },
+        "Five SeveN": {
+            "category": "pistol",
+            "damage": [
+            27,
+            11
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": "750 (debatable)",
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.25,
+            "head_mult": 3.8,
+            "torso_mult": 0.9,
+            "limb_mult": 0.6,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 2.5,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "Fi"
+        },
+        "FN FAL": {
+            "category": "assault_rifle",
+            "damage": [
+            65,
+            51
+            ],
+            "range": [
+            225,
+            400
+            ],
+            "fire_rate": 500,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.45,
+            "hor_recoil": 0.8,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.75,
+            "aim": 0.45,
+            "weight": 15.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "FN"
+        },
+        "G36C": {
+            "category": "assault_rifle",
+            "damage": [
+            40,
+            30
+            ],
+            "range": [
+            150,
+            350
+            ],
+            "fire_rate": 750,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.32,
+            "hor_recoil": 0.26,
+            "head_mult": 3.0,
+            "torso_mult": 0.7,
+            "limb_mult": 0.3,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.25,
+            "weight": 6.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "G3"
+        },
+        "G3A3": {
+            "category": "assault_rifle",
+            "damage": [
+            53,
+            44
+            ],
+            "range": [
+            175,
+            400
+            ],
+            "fire_rate": 480,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.6,
+            "hor_recoil": 0.25,
+            "head_mult": 4.0,
+            "torso_mult": 0.9,
+            "limb_mult": 0.55,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.3,
+            "weight": 12.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "G3A"
+        },
+        "Groza-4": {
+            "category": "assault_rifle",
+            "damage": [
+            40,
+            12.5
+            ],
+            "range": [
+            150,
+            275
+            ],
+            "fire_rate": 750,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.3,
+            "head_mult": 5.5,
+            "torso_mult": 0.85,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": true,
+            "spawn": "GRO"
+        },
+        "HK416": {
+            "category": "assault_rifle",
+            "damage": [
+            40,
+            30
+            ],
+            "range": [
+            150,
+            350
+            ],
+            "fire_rate": 780,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.35,
+            "hor_recoil": 0.28,
+            "head_mult": 3.0,
+            "torso_mult": 0.7,
+            "limb_mult": 0.3,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 9.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "HK"
+        },
+        "Honey Badger": {
+            "category": "smg",
+            "damage": [
+            30,
+            15
+            ],
+            "range": [
+            130,
+            275
+            ],
+            "fire_rate": 800,
+            "accuracy": 50,
+            "capacity": 30,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.45,
+            "head_mult": 4,
+            "torso_mult": 1.1,
+            "limb_mult": 0.8,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.2,
+            "weight": 6.5,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "HON"
+        },
+        "HW Cappa": {
+            "category": "pistol",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            50,
+            150
+            ],
+            "fire_rate": 500,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.5,
+            "hor_recoil": 0.5,
+            "head_mult": 6.0,
+            "torso_mult": 2.6,
+            "limb_mult": 1.25,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 2.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "HWC"
+        },
+        "HW Jolt": {
+            "category": "smg",
+            "damage": [
+            19,
+            9
+            ],
+            "range": [
+            100,
+            200
+            ],
+            "fire_rate": 670,
+            "accuracy": 0,
+            "capacity": 24,
+            "vert_recoil": 0.27,
+            "hor_recoil": 0.41,
+            "head_mult": 6.0,
+            "torso_mult": 1.5,
+            "limb_mult": 1.2,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.3,
+            "weight": 4.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "HWJ"
+        },
+        "HW Pulper": {
+            "category": "shotgun",
+            "damage": [
+            0,
+            0
+            ],
+            "range": [
+            35,
+            85
+            ],
+            "fire_rate": 74,
+            "accuracy": 24,
+            "capacity": 6,
+            "vert_recoil": 0.8,
+            "hor_recoil": 0.75,
+            "head_mult": 4.0,
+            "torso_mult": 2.5,
+            "limb_mult": 2.0,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.25,
+            "weight": 6.0,
+            "mode": "Pump Action",
+            "gamepass": true,
+            "spawn": "HW"
+        },
+        "HW Spear": {
+            "category": "pistol",
+            "damage": [
+            25,
+            16
+            ],
+            "range": [
+            100,
+            280
+            ],
+            "fire_rate": 400,
+            "accuracy": 0,
+            "capacity": 16,
+            "vert_recoil": 0.6,
+            "hor_recoil": 0.6,
+            "head_mult": 5.0,
+            "torso_mult": 2.6,
+            "limb_mult": 2.0,
+            "reload": 0.0,
+            "equip": 0.5,
+            "aim": 0.34,
+            "weight": 4.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "HWS"
+        },
+        "Ithaca 37 Stakeout": {
+            "category": "shotgun",
+            "damage": [
+            0,
+            0
+            ],
+            "range": [
+            40,
+            100
+            ],
+            "fire_rate": 75,
+            "accuracy": 30,
+            "capacity": 5,
+            "vert_recoil": 0.8,
+            "hor_recoil": 0.75,
+            "head_mult": 3.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.9,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.25,
+            "weight": 6.0,
+            "mode": "Pump Action",
+            "gamepass": true,
+            "spawn": "I"
+        },
+        "JNG-90": {
+            "category": "sniper",
+            "damage": [
+            55,
+            40
+            ],
+            "range": [
+            250,
+            600
+            ],
+            "fire_rate": 75,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.8,
+            "hor_recoil": 0.35,
+            "head_mult": 10.0,
+            "torso_mult": 1.25,
+            "limb_mult": 0.92,
+            "reload": 0.0,
+            "equip": 0.8,
+            "aim": 0.35,
+            "weight": 10.0,
+            "mode": "Bolt Action",
+            "gamepass": false,
+            "spawn": "JN"
+        },
+        "KRISS Vector": {
+            "category": "smg",
+            "damage": [
+            20,
+            10
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 1000,
+            "accuracy": 0,
+            "capacity": 33,
+            "vert_recoil": 0.2,
+            "hor_recoil": 0.5,
+            "head_mult": 8.0,
+            "torso_mult": 1.5,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": true,
+            "spawn": "KR"
+        },
+        "L85A2": {
+            "category": "assault_rifle",
+            "damage": [
+            33,
+            23
+            ],
+            "range": [
+            150,
+            350
+            ],
+            "fire_rate": 700,
+            "accuracy": 0,
+            "capacity": 40,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.3,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.8,
+            "aim": 0.3,
+            "weight": 10.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "L"
+        },
+        "L96A1": {
+            "category": "sniper",
+            "damage": [
+            85,
+            35
+            ],
+            "range": [
+            250,
+            600
+            ],
+            "fire_rate": 40,
+            "accuracy": 0,
+            "capacity": 5,
+            "vert_recoil": 0.6,
+            "hor_recoil": 0.6,
+            "head_mult": 6.0,
+            "torso_mult": 2.3,
+            "limb_mult": 0.8,
+            "reload": 0.0,
+            "equip": 1.0,
+            "aim": 0.45,
+            "weight": 14.0,
+            "mode": "Bolt Action",
+            "gamepass": false,
+            "spawn": "L9"
+        },
+        "Lee Enfield": {
+            "category": "sniper",
+            "damage": [
+            54,
+            38
+            ],
+            "range": [
+            200,
+            400
+            ],
+            "fire_rate": 55,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.6,
+            "hor_recoil": 0.6,
+            "head_mult": 5.0,
+            "torso_mult": 1.9,
+            "limb_mult": 0.8,
+            "reload": 0.0,
+            "equip": 0.8,
+            "aim": 0.4,
+            "weight": 8.0,
+            "mode": "Bolt Action",
+            "gamepass": false,
+            "spawn": "LEE"
+        },
+        "Lewis Automatic Rifle": {
+            "category": "LMG",
+            "damage": [
+            30,
+            20
+            ],
+            "range": [
+            175,
+            400
+            ],
+            "fire_rate": 550,
+            "accuracy": 0,
+            "capacity": 97,
+            "vert_recoil": 0.35,
+            "hor_recoil": 0.6,
+            "head_mult": 4.0,
+            "torso_mult": 1.5,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 1.75,
+            "aim": 0.3,
+            "weight": 30.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "LE"
+        },
+        "Luger P08": {
+            "category": "pistol",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": "600 (debatable)",
+            "accuracy": 0,
+            "capacity": 8,
+            "vert_recoil": 0.4,
+            "hor_recoil": 0.4,
+            "head_mult": 5.0,
+            "torso_mult": 1.75,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 2.5,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "LU"
+        },
+        "M1 Garand": {
+            "category": "dmr",
+            "damage": [
+            60,
+            45
+            ],
+            "range": [
+            200,
+            400
+            ],
+            "fire_rate": 300,
+            "accuracy": 0,
+            "capacity": 8,
+            "vert_recoil": 0.8,
+            "hor_recoil": 0.8,
+            "head_mult": 2.5,
+            "torso_mult": 1.7,
+            "limb_mult": 1.0,
+            "reload": 1.0,
+            "equip": 0.6,
+            "aim": 0.3,
+            "weight": 12.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "M1G"
+        },
+        "M16A2": {
+            "category": "assault_rifle",
+            "damage": [
+            20,
+            16
+            ],
+            "range": [
+            130,
+            375
+            ],
+            "fire_rate": 800,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.29,
+            "hor_recoil": 0.36,
+            "head_mult": 6.0,
+            "torso_mult": 1.7,
+            "limb_mult": 1.0,
+            "reload": 0.0,
+            "equip": 0.5,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "M16"
+        },
+        "M1911": {
+            "category": "pistol",
+            "damage": [
+            25,
+            15
+            ],
+            "range": [
+            75,
+            140
+            ],
+            "fire_rate": "750 (debatable)",
+            "accuracy": 0,
+            "capacity": 7,
+            "vert_recoil": 0.48,
+            "hor_recoil": 0.19,
+            "head_mult": 7.5,
+            "torso_mult": 3.0,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.26,
+            "aim": 0.17,
+            "weight": 2.5,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "M1"
+        },
+        "M1921 Thompson": {
+            "category": "smg",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 720,
+            "accuracy": 0,
+            "capacity": 50,
+            "vert_recoil": 0.2,
+            "hor_recoil": 0.65,
+            "head_mult": 7.5,
+            "torso_mult": 1.75,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.3,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": true,
+            "spawn": "M192"
+        },
+        "M26 MASS": {
+            "category": "shotgun",
+            "damage": [
+            60,
+            30
+            ],
+            "range": [
+            225,
+            400
+            ],
+            "fire_rate": 120,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.9,
+            "hor_recoil": 0.9,
+            "head_mult": 4.0,
+            "torso_mult": 1.75,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.3,
+            "weight": 6.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "M2"
+        },
+        "M4 Carbine": {
+            "category": "assault_rifle",
+            "damage": [
+            33,
+            23
+            ],
+            "range": [
+            150,
+            350
+            ],
+            "fire_rate": 800,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.3,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "M4"
+        },
+        "M9": {
+            "category": "pistol",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            150,
+            250
+            ],
+            "fire_rate": 750,
+            "accuracy": 0,
+            "capacity": 15,
+            "vert_recoil": 0.4,
+            "hor_recoil": 0.4,
+            "head_mult": 5.0,
+            "torso_mult": 1.75,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 2.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "M9"
+        },
+        "MAC-10": {
+            "category": "smg",
+            "damage": [
+            20,
+            10
+            ],
+            "range": [
+            50,
+            250
+            ],
+            "fire_rate": 1000,
+            "accuracy": 0,
+            "capacity": 31,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.7,
+            "head_mult": 6.5,
+            "torso_mult": 1.0,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 4.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MAC"
+        },
+        "Magnum Revolver": {
+            "category": "pistol",
+            "damage": [
+            40,
+            35
+            ],
+            "range": [
+            50,
+            250
+            ],
+            "fire_rate": 140,
+            "accuracy": 0,
+            "capacity": 6,
+            "vert_recoil": 0.8,
+            "hor_recoil": 0.8,
+            "head_mult": 5.0,
+            "torso_mult": 2.5,
+            "limb_mult": 0.75,
+            "reload": 3.0,
+            "equip": 0.4,
+            "aim": 0.15,
+            "weight": 3.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "MAG"
+        },
+        "Makarov": {
+            "category": "pistol",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": "750 (debatable)",
+            "accuracy": 0,
+            "capacity": 8,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.3,
+            "head_mult": 5.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.2,
+            "aim": 0.1,
+            "weight": 2.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "MAK"
+        },
+        "MCX LVAW": {
+            "category": "assault_rifle",
+            "damage": [
+            30,
+            15
+            ],
+            "range": [
+            110,
+            230
+            ],
+            "fire_rate": 815,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.28,
+            "hor_recoil": 0.29,
+            "head_mult": 4.0,
+            "torso_mult": 1.1,
+            "limb_mult": 0.8,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 7.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MC"
+        },
+        "MG4": {
+            "category": "LMG",
+            "damage": [
+            33,
+            23
+            ],
+            "range": [
+            175,
+            400
+            ],
+            "fire_rate": 700,
+            "accuracy": 0,
+            "capacity": 100,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.4,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 7.5,
+            "equip": 1.0,
+            "aim": 0.5,
+            "weight": 32.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MG"
+        },
+        "MK 17 CQC": {
+            "category": "assault_rifle",
+            "damage": [
+            40,
+            30
+            ],
+            "range": [
+            175,
+            300
+            ],
+            "fire_rate": 620,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.45,
+            "hor_recoil": 0.6,
+            "head_mult": 4.0,
+            "torso_mult": 1.4,
+            "limb_mult": 0.75,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MK"
+        },
+        "MK-11": {
+            "category": "pistol",
+            "damage": [
+            45,
+            30
+            ],
+            "range": [
+            250,
+            500
+            ],
+            "fire_rate": 400,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.45,
+            "hor_recoil": 0.8,
+            "head_mult": 4.0,
+            "torso_mult": 1.7,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.5,
+            "aim": 0.35,
+            "weight": 12.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "MK-1"
+        },
+        "Model 1777 Musket": {
+            "category": "misc",
+            "damage": [
+            65,
+            40
+            ],
+            "range": [
+            250,
+            500
+            ],
+            "fire_rate": 6,
+            "accuracy": 0,
+            "capacity": 1,
+            "vert_recoil": 0.5,
+            "hor_recoil": 0.5,
+            "head_mult": 6.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.5,
+            "reload": 10.0,
+            "equip": 1.25,
+            "aim": 0.5,
+            "weight": 15.0,
+            "mode": "Flintlock",
+            "gamepass": false,
+            "spawn": "M"
+        },
+        "MP40": {
+            "category": "smg",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 575,
+            "accuracy": 0,
+            "capacity": 31,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.45,
+            "head_mult": 5.0,
+            "torso_mult": 1.25,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MP40"
+        },
+        "MP443": {
+            "category": "pistol",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": 750,
+            "accuracy": 0,
+            "capacity": 12,
+            "vert_recoil": 0.4,
+            "hor_recoil": 0.4,
+            "head_mult": 5.0,
+            "torso_mult": 1.75,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 2.5,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "MP"
+        },
+        "MP5A2": {
+            "category": "smg",
+            "damage": [
+            14,
+            8
+            ],
+            "range": [
+            130,
+            270
+            ],
+            "fire_rate": 815,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.27,
+            "hor_recoil": 0.21,
+            "head_mult": 8.0,
+            "torso_mult": 2.1,
+            "limb_mult": 1.4,
+            "reload": 0.0,
+            "equip": 0.5,
+            "aim": 0.15,
+            "weight": 5.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MP5A"
+        },
+        "MP5K": {
+            "category": "smg",
+            "damage": [
+            18,
+            9
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 885,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.45,
+            "head_mult": 8.0,
+            "torso_mult": 1.5,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.15,
+            "weight": 4.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MP5"
+        },
+        "MP7": {
+            "category": "smg",
+            "damage": [
+            29,
+            22
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 860,
+            "accuracy": 0,
+            "capacity": 40,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.37,
+            "head_mult": 4.0,
+            "torso_mult": 1.0,
+            "limb_mult": 0.6,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.25,
+            "weight": 5.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MP7"
+        },
+        "MPX": {
+            "category": "smg",
+            "damage": [
+            25,
+            18
+            ],
+            "range": [
+            120,
+            200
+            ],
+            "fire_rate": 800,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.38,
+            "hor_recoil": 0.19,
+            "head_mult": 6.0,
+            "torso_mult": 1.2,
+            "limb_mult": 1.0,
+            "reload": 0.0,
+            "equip": 0.5,
+            "aim": 0.2,
+            "weight": 6.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "MPX"
+        },
+        "Nail Gun": {
+            "category": "misc",
+            "damage": [
+            15,
+            1
+            ],
+            "range": [
+            8,
+            20
+            ],
+            "fire_rate": 600,
+            "accuracy": 0,
+            "capacity": 60,
+            "vert_recoil": 0.05,
+            "hor_recoil": 0.05,
+            "head_mult": 10.0,
+            "torso_mult": 1.0,
+            "limb_mult": 1.0,
+            "reload": 4.0,
+            "equip": 0.6,
+            "aim": 0.15,
+            "weight": 10.0,
+            "mode": "Auto",
+            "gamepass": true,
+            "spawn": "NA"
+        },
+        "Olympia": {
+            "category": "shotgun",
+            "damage": [
+            95,
+            40
+            ],
+            "range": [
+            75,
+            200
+            ],
+            "fire_rate": 1200,
+            "accuracy": 0,
+            "capacity": 2,
+            "vert_recoil": 0.95,
+            "hor_recoil": 0.95,
+            "head_mult": 4.0,
+            "torso_mult": 3.5,
+            "limb_mult": 0.6,
+            "reload": 0.0,
+            "equip": 0.7,
+            "aim": 0.3,
+            "weight": 12.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "OL"
+        },
+        "P226": {
+            "category": "pistol",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": "750 (debatable)",
+            "accuracy": 0,
+            "capacity": 15,
+            "vert_recoil": 0.4,
+            "hor_recoil": 0.4,
+            "head_mult": 5.0,
+            "torso_mult": 1.75,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 2.5,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "P2"
+        },
+        "P90": {
+            "category": "smg",
+            "damage": [
+            27,
+            21
+            ],
+            "range": [
+            125,
+            270
+            ],
+            "fire_rate": 910,
+            "accuracy": 0,
+            "capacity": 50,
+            "vert_recoil": 0.26,
+            "hor_recoil": 0.35,
+            "head_mult": 3.8,
+            "torso_mult": 0.9,
+            "limb_mult": 0.6,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "P9"
+        },
+        "Pipe Shotgun": {
+            "category": "shotgun",
+            "damage": [
+            0,
+            0
+            ],
+            "range": [
+            20,
+            50
+            ],
+            "fire_rate": 750,
+            "accuracy": 9,
+            "capacity": 1,
+            "vert_recoil": 1.1,
+            "hor_recoil": 0.7,
+            "head_mult": 3.0,
+            "torso_mult": 2.0,
+            "limb_mult": 1.0,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.32,
+            "weight": 8.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "P"
+        },
+        "PP2000": {
+            "category": "smg",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 760,
+            "accuracy": 0,
+            "capacity": 40,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.28,
+            "head_mult": 6.0,
+            "torso_mult": 1.5,
+            "limb_mult": 1.0,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.25,
+            "weight": 3.0,
+            "mode": "Auto",
+            "gamepass": true,
+            "spawn": "PPS"
+        },
+        "PPSH-41": {
+            "category": "smg",
+            "damage": [
+            20,
+            10
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 1000,
+            "accuracy": 0,
+            "capacity": 71,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.4,
+            "head_mult": 6.0,
+            "torso_mult": 0.9,
+            "limb_mult": 0.75,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 10.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "PPS"
+        },
+        "QBU-88": {
+            "category": "dmr",
+            "damage": [
+            40,
+            30
+            ],
+            "range": [
+            280,
+            500
+            ],
+            "fire_rate": 450,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.45,
+            "hor_recoil": 0.5,
+            "head_mult": 5.0,
+            "torso_mult": 1.25,
+            "limb_mult": 1.0,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 9.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "QBU"
+        },
+        "QBZ-95": {
+            "category": "assault_rifle",
+            "damage": [
+            33,
+            23
+            ], /* itsudemo I love you, kimi ni take kiss me */
+            "range": [
+            190,
+            350
+            ],
+            "fire_rate": 670,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.32,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 9.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "Q"
+        },
+        "R700 Hunter": {
+            "category": "sniper",
+            "damage": [
+            70,
+            45
+            ],
+            "range": [
+            200,
+            450
+            ],
+            "fire_rate": 44,
+            "accuracy": 0,
+            "capacity": 5,
+            "vert_recoil": 0.6,
+            "hor_recoil": 0.6,
+            "head_mult": 5.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.8,
+            "reload": 0.0,
+            "equip": 0.8,
+            "aim": 0.4,
+            "weight": 10.0,
+            "mode": "Bolt Action",
+            "gamepass": false,
+            "spawn": "R7"
+        },
+        "M870 (12 pellets)": {
+            "category": "shotgun",
+            "damage": [
+            15,
+            3
+            ],
+            "range": [
+            50,
+            125
+            ],
+            "fire_rate": 60,
+            "accuracy": 45,
+            "capacity": 8,
+            "vert_recoil": 1.0,
+            "hor_recoil": 1.0,
+            "head_mult": 3.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.75,
+            "reload": 0.75,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 10.0,
+            "mode": "Pump Action",
+            "gamepass": false,
+            "spawn": "M8"
+        },
+        "RFB": {
+            "category": "dmr",
+            "damage": [
+            45,
+            34
+            ],
+            "range": [
+            250,
+            500
+            ],
+            "fire_rate": 600,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.55,
+            "hor_recoil": 0.55,
+            "head_mult": 4.0,
+            "torso_mult": 1.4,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 10.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "RF"
+        },
+        "RPK": {
+            "category": "assault_rifle",
+            "damage": [
+            32,
+            26
+            ],
+            "range": [
+            175,
+            400
+            ],
+            "fire_rate": 600,
+            "accuracy": 140,
+            "capacity": 45,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.25,
+            "head_mult": 4.0,
+            "torso_mult": 1.0,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.75,
+            "aim": 0.3,
+            "weight": 16.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "RP"
+        },
+        "RPK-74": {
+            "category": "assault_rifle",
+            "damage": [
+            35,
+            29
+            ],
+            "range": [
+            250,
+            400
+            ],
+            "fire_rate": 580,
+            "accuracy": 0,
+            "capacity": 75,
+            "vert_recoil": 0.29,
+            "hor_recoil": 0.4,
+            "head_mult": 4.0,
+            "torso_mult": 0.75,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 1.0,
+            "aim": 0.6,
+            "weight": 22.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "RPK-"
+        },
+        "RMK2": {
+            "category": "pistol",
+            "damage": [
+            6,
+            4
+            ],
+            "range": [
+            50,
+            150
+            ],
+            "fire_rate": "1000 (debatable)",
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.08,
+            "head_mult": 17.0,
+            "torso_mult": 4.0,
+            "limb_mult": 1.9,
+            "reload": 0.0,
+            "equip": 0.3,
+            "aim": 0.1,
+            "weight": 3.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "RM"
+        },
+        "Saddlegun": {
+            "category": "misc",
+            "damage": [
+            55,
+            22
+            ],
+            "range": [
+            60,
+            180
+            ],
+            "fire_rate": "100 (faster hipfire)",
+            "accuracy": 0,
+            "capacity": 5,
+            "vert_recoil": 0.65,
+            "hor_recoil": 0.65,
+            "head_mult": 9.0,
+            "torso_mult": 1.6,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.2,
+            "weight": 4.0,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "SA"
+        },
+        "Saiga 12K": {
+            "category": "shotgun",
+            "damage": [
+            0,
+            0
+            ],
+            "range": [
+            75,
+            200
+            ],
+            "fire_rate": 500,
+            "accuracy": 0,
+            "capacity": 5,
+            "vert_recoil": 0.65,
+            "hor_recoil": 0.8,
+            "head_mult": 10.0,
+            "torso_mult": 5.0,
+            "limb_mult": 5.0,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 8.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "SAI"
+        },
+        "SCAR-H": {
+            "category": "assault_rifle",
+            "damage": [
+            45,
+            33
+            ],
+            "range": [
+            0,
+            0
+            ],
+            "fire_rate": 600,
+            "accuracy": 0,
+            "capacity": 20,
+            "vert_recoil": 0.35,
+            "hor_recoil": 0.57,
+            "head_mult": 3.56,
+            "torso_mult": 1.24,
+            "limb_mult": 0.67,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 10.0,
+            "mode": "Auto",
+            "gamepass": true,
+            "spawn": "SCA"
+        },
+        "Scorpion EVO": {
+            "category": "smg",
+            "damage": [
+            18,
+            9
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 900,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.29,
+            "hor_recoil": 0.22,
+            "head_mult": 8.0,
+            "torso_mult": 1.2,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.45,
+            "aim": 0.15,
+            "weight": 6.0,
+            "mode": "Auto",
+            "gamepass": true,
+            "spawn": "SC"
+        },
+        "SG-552 Commando": {
+            "category": "assault_rifle",
+            "damage": [
+            33,
+            23
+            ],
+            "range": [
+            150,
+            275
+            ],
+            "fire_rate": 800,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.3,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.35,
+            "aim": 0.2,
+            "weight": 6.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "SG"
+        },
+            "ShAK-12": {
+            "category": "dmr",
+            "damage": [
+            70,
+            45
+            ],
+            "range": [
+            170,
+            300
+            ],
+            "fire_rate": 430,
+            "accuracy": 312,
+            "capacity": 20,
+            "vert_recoil": 0.48,
+            "hor_recoil": 0.54,
+            "head_mult": 2.5,
+            "torso_mult": 1.1,
+            "limb_mult": 0.45,
+            "reload": 3.2,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 13.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "SHA"
+        },
+        "SKS": {
+            "category": "dmr",
+            "damage": [
+            40,
+            30
+            ],
+            "range": [
+            175,
+            400
+            ],
+            "fire_rate": 600,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.45,
+            "hor_recoil": 0.45,
+            "head_mult": 4.85,
+            "torso_mult": 1.6,
+            "limb_mult": 0.8,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.5,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "SK"
+        },
+        "SOPMOD Block II": {
+            "category": "assault_rifle",
+            "damage": [
+            33,
+            23
+            ],
+            "range": [
+            150,
+            350
+            ],
+            "fire_rate": 800,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.3,
+            "head_mult": 4.0,
+            "torso_mult": 0.8,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "SO"
+        },
+        "SPAS-12": {
+            "category": "shotgun",
+            "damage": [
+            0,
+            0
+            ],
+            "range": [
+            75,
+            200
+            ],
+            "fire_rate": 240,
+            "accuracy": 25,
+            "capacity": 8,
+            "vert_recoil": 0.7,
+            "hor_recoil": 0.9,
+            "head_mult": 3.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.5,
+            "reload": 1.0,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 12.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "SP"
+        },
+        "SR-2M": {
+            "category": "smg",
+            "damage": [
+            33,
+            25
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 900,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.31,
+            "hor_recoil": 0.24,
+            "head_mult": 4.0,
+            "torso_mult": 0.85,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.3,
+            "weight": 4.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "SR",
+            "adrev": "fuck you adrev btw"
+        },
+        "Steyr Elite": {
+            "category": "sniper",
+            "damage": [
+            70,
+            30
+            ],
+            "range": [
+            200,
+            600
+            ],
+            "fire_rate": 55,
+            "accuracy": 0,
+            "capacity": 10,
+            "vert_recoil": 0.4,
+            "hor_recoil": 0.1,
+            "head_mult": 3.5,
+            "torso_mult": 1.5,
+            "limb_mult": 1.0,
+            "reload": 0.0,
+            "equip": 1.0,
+            "aim": 0.45,
+            "weight": 4.5,
+            "mode": "Bolt Action",
+            "gamepass": false,
+            "spawn": "ST"
+        },
+        "TMP": {
+            "category": "smg",
+            "damage": [
+            18,
+            9
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": 850,
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.45,
+            "head_mult": 8.0,
+            "torso_mult": 1.5,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "TM"
+        },
+        "Tumor Growth": {
+            "category": "misc",
+            "damage": [
+            20,
+            15
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": "666.67",
+            "accuracy": 0,
+            "capacity": 30,
+            "vert_recoil": 0.25,
+            "hor_recoil": 0.6,
+            "head_mult": 1.2,
+            "torso_mult": 1.0,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 5.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "T"
+        },
+        "UMP-45": {
+            "category": "smg",
+            "damage": [
+            25,
+            15
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 700,
+            "accuracy": 0,
+            "capacity": 25,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.3,
+            "head_mult": 5.0,
+            "torso_mult": 1.5,
+            "limb_mult": 0.8,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.25,
+            "weight": 5.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "U"
+        },
+        "UNICA 6": {
+            "category": "pistol",
+            "damage": [
+            52,
+            45
+            ],
+            "range": [
+            150,
+            250
+            ],
+            "fire_rate": 140,
+            "accuracy": 0,
+            "capacity": 6,
+            "vert_recoil": 0.65,
+            "hor_recoil": 0.25,
+            "head_mult": 5.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.5,
+            "reload": 2.75,
+            "equip": 0.4,
+            "aim": 0.15,
+            "weight": 3.5,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "UN"
+        },
+        "USP Match": {
+            "category": "pistol",
+            "damage": [
+            25,
+            15
+            ],
+            "range": [
+            60,
+            110
+            ],
+            "fire_rate": 590,
+            "accuracy": 0,
+            "capacity": 13,
+            "vert_recoil": 0.37,
+            "hor_recoil": 0.6,
+            "head_mult": 7.5,
+            "torso_mult": 1.5,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 2.5,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "USPMA"
+        },
+        "USP MK23": {
+            "category": "pistol",
+            "damage": [
+            25,
+            15
+            ],
+            "range": [
+            100,
+            250
+            ],
+            "fire_rate": 550,
+            "accuracy": 0,
+            "capacity": 12,
+            "vert_recoil": 0.3,
+            "hor_recoil": 0.6,
+            "head_mult": 7.5,
+            "torso_mult": 1.5,
+            "limb_mult": 0.5,
+            "reload": 0.0,
+            "equip": 0.4,
+            "aim": 0.1,
+            "weight": 2.5,
+            "mode": "Semi",
+            "gamepass": false,
+            "spawn": "US"
+        },
+        "UTS-15": {
+            "category": "shotgun",
+            "damage": [
+            0,
+            0
+            ],
+            "range": [
+            75,
+            200
+            ],
+            "fire_rate": 85,
+            "accuracy": 30,
+            "capacity": 14,
+            "vert_recoil": 0.6,
+            "hor_recoil": 0.6,
+            "head_mult": 3.0,
+            "torso_mult": 2.0,
+            "limb_mult": 0.5,
+            "reload": 0.85,
+            "equip": 0.6,
+            "aim": 0.35,
+            "weight": 12.0,
+            "mode": "Pump Action",
+            "gamepass": true,
+            "spawn": "UT"
+        },
+        "Uzi": {
+            "category": "smg",
+            "damage": [
+            25,
+            20
+            ],
+            "range": [
+            100,
+            225
+            ],
+            "fire_rate": 650,
+            "accuracy": 0,
+            "capacity": 25,
+            "vert_recoil": 0.2,
+            "hor_recoil": 0.7,
+            "head_mult": 5.5,
+            "torso_mult": 1.5,
+            "limb_mult": 0.8,
+            "reload": 0.0,
+            "equip": 0.6,
+            "aim": 0.25,
+            "weight": 8.0,
+            "mode": "Auto",
+            "gamepass": false,
+            "spawn": "UZ"
+        },
+        "Walther WA2000": {
+            "category": "dmr",
+            "damage": [
+            80,
+            60
+            ],
+            "range": [
+            300,
+            600
+            ],
+            "fire_rate": 90,
+            "accuracy": 0,
+            "capacity": 5,
+            "vert_recoil": 0.9,
+            "hor_recoil": 0.7,
+            "head_mult": 5.0,
+            "torso_mult": 1.5,
+            "limb_mult": 1.0,
+            "reload": 0.0,
+            "equip": 1.25,
+            "aim": 0.45,
+            "weight": 18.0,
+            "mode": "Semi",
+            "gamepass": true,
+            "spawn": "WA"
+        }
+    };
 
+    /* ---------- utilities ---------- */
     function categoryLabel(cat) {
         const labels = {
             assault_rifle: "Assault Rifle (AR)",
@@ -2537,7 +2703,7 @@
             misc: "Misc",
             unknown: "if i remove this the site will break one way or another"
         };
-        return labels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
+        return labels[cat] || (typeof cat === 'string' ? cat.charAt(0).toUpperCase() + cat.slice(1) : String(cat));
     }
     function getCategories() {
         const cats = {};
@@ -2576,26 +2742,162 @@
             <a href="#" class="nav-item" data-category="progress"><strong>Progress</strong></a>`;
     }
 
-    // PAGINATION
-    // PAGINATION
+    /* ---------- pagination / sorting / search state ---------- */
     const ITEMS_PER_PAGE = 6;
     let currentCategory = null;
     let currentPage = 1;
+
+    // sorting state
+    let currentSort = 'name'; // many keys: name | damage | fire_rate | accuracy | capacity | weight | range | head_mult | torso_mult | limb_mult | reload | equip | aim | vert_recoil | hor_recoil | gamepass
+    let sortAsc = false;
+
+    // search state
+    let lastSearchTerm = '';
+
+    // helpers to parse numeric-ish fields safely
+    function parseNumber(val) {
+        if (val == null) return 0;
+        if (typeof val === 'number') return val;
+        if (Array.isArray(val)) {
+            // return the highest number found (useful for damage/range arrays)
+            const nums = val.filter(x => typeof x === 'number');
+            if (!nums.length) return 0;
+            return Math.max(...nums);
+        }
+        if (typeof val === 'string') {
+            const m = val.match(/-?\d+(\.\d+)?/);
+            return m ? Number(m[0]) : 0;
+        }
+        return 0;
+    }
+
+    function getComparableValue(stats, key) {
+        if (!stats) return 0;
+        switch (key) {
+            case 'name': return 0; // handled separately
+            case 'damage': return parseNumber(stats.damage);
+            case 'range': return parseNumber(stats.range);
+            case 'fire_rate': return parseNumber(stats.fire_rate);
+            case 'accuracy': return parseNumber(stats.accuracy);
+            case 'capacity': return parseNumber(stats.capacity);
+            case 'weight': return parseNumber(stats.weight);
+            case 'head_mult': return parseNumber(stats.head_mult);
+            case 'torso_mult': return parseNumber(stats.torso_mult);
+            case 'limb_mult': return parseNumber(stats.limb_mult);
+            case 'reload': return parseNumber(stats.reload);
+            case 'equip': return parseNumber(stats.equip);
+            case 'aim': return parseNumber(stats.aim);
+            case 'vert_recoil': return parseNumber(stats.vert_recoil);
+            case 'hor_recoil': return parseNumber(stats.hor_recoil);
+            case 'gamepass': return stats.gamepass ? 1 : 0;
+            default: return 0;
+        }
+    }
+
+    function sortGunsArray(gunsArr, sortBy, asc) {
+        const arr = [...gunsArr];
+        if (sortBy === 'name') {
+            arr.sort((a,b) => a[0].localeCompare(b[0]));
+            if (!asc) arr.reverse();
+        } else {
+            arr.sort((a,b) => {
+                const va = getComparableValue(a[1], sortBy);
+                const vb = getComparableValue(b[1], sortBy);
+                if (va === vb) return a[0].localeCompare(b[0]);
+                return asc ? va - vb : vb - va;
+            });
+        }
+        return arr;
+    }
+
+    /* ---------- rendering helpers ---------- */
+    function escapeHtml(s) {
+        if (s == null) return '';
+        return String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function renderTitleRow(title) {
+        // returns markup for the title row with the page-hamburger at left
+        return `
+            <div class="title-row">
+                <button class="page-hamburger" id="pageHamburger" aria-label="Toggle sidebar">☰</button>
+                <h1 class="page-title">${escapeHtml(title)}</h1>
+            </div>
+        `;
+    }
+
+    /* ---------- search ---------- */
+    function renderSearchResults(term) {
+        const pageContent = document.getElementById('page-content');
+        const q = term.trim().toLowerCase();
+        if (!q) {
+            // empty -> re-render current category
+            renderCategory(currentCategory || 'information', 1);
+            return;
+        }
+        // search over names, spawn codes, and categories
+        const hits = Object.entries(TOWN_GUNS).filter(([name, stats]) => {
+            if (!name) return false;
+            const nameMatch = name.toLowerCase().includes(q);
+            const spawn = (stats.spawn || '').toString().toLowerCase();
+            const spawnMatch = spawn.includes(q);
+            const cat = (stats.category || '').toString().toLowerCase();
+            const catMatch = cat.includes(q);
+            return nameMatch || spawnMatch || catMatch;
+        });
+
+        let html = renderTitleRow(`Search: ${term}`);
+        html += `<div class="page-description">${hits.length} result(s)</div>`;
+        if (!hits.length) {
+            html += `<p class="page-description">No results. Try name, spawn code, or category.</p>`;
+        } else {
+            html += `<ul class="feature-list">`;
+            for (const [name, stats] of hits) {
+                html += `<li class="feature-item search-hit" data-name="${escapeHtml(name)}">
+                    <div class="feature-content">
+                        <h3 style="margin-bottom:6px;">${escapeHtml(name)} <span class="cat">[${escapeHtml(stats.category || 'unknown')}]</span></h3>
+                        <p style="margin:0 0 0 0;">
+                            Damage: ${Array.isArray(stats.damage) ? stats.damage.join(' - ') : 'N/A'}<br>
+                            Range: ${Array.isArray(stats.range) ? stats.range.join(' - ') : 'N/A'}<br>
+                            Fire Rate: ${stats.fire_rate ?? '—'} • Capacity: ${stats.capacity ?? '—'}<br>
+                            ${stats.spawn ? `Spawn: ${escapeHtml(stats.spawn)}<br>` : ''}
+                            ${stats.gamepass ? `<span style="color:var(--accent)">gamepass only</span>` : ''}
+                        </p>
+                    </div>
+                </li>`;
+            }
+            html += `</ul>`;
+        }
+        pageContent.innerHTML = html;
+        hookPageHamburger(); // ensure hamburger on page works
+        pageContent.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+
+    /* ---------- category rendering (with sorts + new keys) ---------- */
     function renderCategory(category, page = 1) {
         currentCategory = category;
         currentPage = page;
+        lastSearchTerm = ''; // clear current search when switching categories
+        document.querySelector('.search-box').value = '';
+
         const pageContent = document.getElementById('page-content');
-        // Update ToC content when changing main page
+        // update ToC content when changing main page
         const activeToc = document.querySelector('.toc-link.active');
         updateTocContent(
             activeToc ? activeToc.getAttribute('data-toc') : "about",
             currentCategory
         );
-        // page handler
+
+        // helper to render a list-title header consistently
+        function headerFor(title) {
+            return renderTitleRow(title);
+        }
+
+        // special pages
         if (category === "information") {
             const mainTypes = ['assault_rifle','smg','dmr','sniper','LMG','shotgun'];
             const categories = getCategories();
-            let html = `<h1 class="page-title">Information</h1>`;
+            let html = headerFor('Information');
             html += `<div class="section-title">All Primary Guns</div>`;
             html += `<ul class="feature-list">`;
             mainTypes.forEach(type => {
@@ -2620,124 +2922,166 @@
                 <li class="feature-item"><strong>Progress</strong></li>
             </ul>`;
             pageContent.innerHTML = html;
+            hookPageHamburger();
             pageContent.scrollIntoView({behavior: 'smooth', block: 'start'});
             return;
         }
 
-        // page category handling
         if (category === "nothing_important") {
-            pageContent.innerHTML = `
-                <h1 class="page-title">To-Do</h1>
-                <div class="page-description">what i have to do:</div>
+            let html = headerFor('To-Do');
+            html += `<div class="page-description">what i have to do:</div>
                 <ul class="feature-list">
-                    <li class="feature-item">some eastereggs</li>
-                    <li class="feature-item">improve page swappers (DONE) </li>
-                    <li class="feature-item">improve hamburger menu (DONE)</li>
-                    <li class="feature-item">make the searchbar work</li>
-                    <li class="feature-item"></li>
-                </ul>
-            `;
+                    <li class="feature-item">some eastereggs <strong style="color:#9f9">(DONE)</strong></li>
+                    <li class="feature-item">improve page swappers <strong style="color:#9f9">(DONE)</strong></li>
+                    <li class="feature-item">improve hamburger menu <strong style="color:#9f9">(DONE)</strong></li>
+                    <li class="feature-item">make the searchbar work <strong style="color:#9f9">(DONE)</strong></li>
+                    <li class="feature-item">sorting by stats <strong style="color:#9f9">(DONE)</strong></li>
+                </ul>`;
+            pageContent.innerHTML = html;
+            hookPageHamburger();
             pageContent.scrollIntoView({behavior: 'smooth', block: 'start'});
             return;
         }
+
         if (category === "progress") {
-            pageContent.innerHTML = `
-                <h1 class="page-title">Progress</h1>
-                <div class="page-description">timeline:</div>
+            let html = headerFor('Progress');
+            html += `<div class="page-description">timeline:</div>
                 <ul class="feature-list">
                     <li class="feature-item">- day 1: made the general website and the gun list, still needs porting</li>
                     <li class="feature-item">- day 2: ported the gun list to the website, added next page button</li>
-                    <li class="feature-item">- day 3: implemented the to-do and progress lists (TODAY AS OF NOW (9/22/2025) IS DAY 3). LATER -- GMT+0 3:18 9/22/2025: implemented an introduction page</li>
-                    <li class="feature-item">- day 4: made the info and stuff work (TODAY AS OF NOW (10/11/2025) IS DAY 4). LATER -- GMT+0 6:33 10/11/2025: resumed work on the website </li>
-                </ul>
-            `;
+                    <li class="feature-item">- day 3: implemented the to-do and progress lists (TODAY AS OF NOW (9/22/2025) IS DAY 3). LATER -- GMT+0 3:18PM 9/22/2025: implemented an introduction page</li>
+                    <li class="feature-item">- day 4: made the info and stuff work (TODAY AS OF NOW (10/11/2025) IS DAY 4). LATER -- GMT+0 6:33AM 10/11/2025: resumed work on the website </li>
+                    <li class="feature-item">- day 5: connection terminated (TODAY AS OF NOW (12/4/2025) IS DAY 5). LATER -- GMT+0 6:37AM 12/4/2025: resumed work on the website x2 </li>
+                    <li class="feature-item">- day 5: implemented search bar, light and dark mode. revamped the top bar so things behind it have a heavy blur. revamped the todo page by adding colors to the (DONE) and (NOT COMPLETE) thingies. added a sort by, which includes ascending order and descending.  GMT+0 7:36PM 12/4/2025 </li>
+                </ul>`;
+            pageContent.innerHTML = html;
+            hookPageHamburger();
             pageContent.scrollIntoView({behavior: 'smooth', block: 'start'});
             return;
         }
 
         // default: gun categories
         const guns = Object.entries(TOWN_GUNS).filter(([name, gun]) => gun.category === category);
-        const totalPages = Math.max(1, Math.ceil(guns.length / ITEMS_PER_PAGE));
+        // apply sort BEFORE paging
+        const sortedGuns = sortGunsArray(guns, currentSort, sortAsc);
+        const totalPages = Math.max(1, Math.ceil(sortedGuns.length / ITEMS_PER_PAGE));
         if (page < 1) page = 1;
         if (page > totalPages) page = totalPages;
-        let html = `<h1 class="page-title">${categoryLabel(category)}</h1>`;
 
-        // *** new dropdowns start here ***
+        let html = headerFor(categoryLabel(category));
+
+        // sort controls (modern select)
         html += `
-        <div class="category-dropdowns">
-            <details class="dropdown-block">
-                <summary>about:</summary>
-                <div class="dropdown-content">
-                    <p>you're currently at the ${categoryLabel(category)} category.</p>
+            <div class="sort-controls">
+                <label style="font-size:13px;color:var(--muted);">Sort by</label>
+                <div class="modern-select">
+                    <select id="sortSelect" aria-label="Sort guns">
+                        <option value="name"${currentSort==='name' ? ' selected' : ''}>Name</option>
+                        <option value="damage"${currentSort==='damage' ? ' selected' : ''}>Damage</option>
+                        <option value="range"${currentSort==='range' ? ' selected' : ''}>Range</option>
+                        <option value="fire_rate"${currentSort==='fire_rate' ? ' selected' : ''}>Fire Rate</option>
+                        <option value="accuracy"${currentSort==='accuracy' ? ' selected' : ''}>Accuracy</option>
+                        <option value="capacity"${currentSort==='capacity' ? ' selected' : ''}>Capacity</option>
+                        <option value="weight"${currentSort==='weight' ? ' selected' : ''}>Weight</option>
+                        <option value="head_mult"${currentSort==='head_mult' ? ' selected' : ''}>Head Mult</option>
+                        <option value="torso_mult"${currentSort==='torso_mult' ? ' selected' : ''}>Torso Mult</option>
+                        <option value="limb_mult"${currentSort==='limb_mult' ? ' selected' : ''}>Limb Mult</option>
+                        <option value="reload"${currentSort==='reload' ? ' selected' : ''}>Reload</option>
+                        <option value="equip"${currentSort==='equip' ? ' selected' : ''}>Equip Speed</option>
+                        <option value="aim"${currentSort==='aim' ? ' selected' : ''}>Aim Time</option>
+                        <option value="vert_recoil"${currentSort==='vert_recoil' ? ' selected' : ''}>Vertical Recoil</option>
+                        <option value="hor_recoil"${currentSort==='hor_recoil' ? ' selected' : ''}>Horizontal Recoil</option>
+                        <option value="gamepass"${currentSort==='gamepass' ? ' selected' : ''}>Gamepass Only</option>
+                    </select>
                 </div>
-            </details>
-
-            <details class="dropdown-block">
-                <summary>this page:</summary>
-                <div class="dropdown-content">
-                    <p>lists all info for ${categoryLabel(category)}s</p>
-                </div>
-            </details>
-
-            <details class="dropdown-block">
-                <summary>information:</summary>
-                <div class="dropdown-content">
-                    <p>${categoryLabel(category)}s are good</p>
-                </div>
-            </details>
-        </div>
+                <button id="toggleSortOrder" aria-pressed="${sortAsc}" class="icon-btn">${sortAsc ? 'Asc' : 'Desc'}</button>
+                <div style="flex:1"></div>
+                <div style="color:var(--muted);font-size:13px;">Page ${page} / ${totalPages}</div>
+            </div>
         `;
-        // *** new dropdowns end here ***
 
-        if (!guns.length) {
+        if (!sortedGuns.length) {
             html += `<p class="page-description">no guns found in this category!</p>`;
         } else {
             html += `<ul class="feature-list">`;
-            for (const [name, stats] of guns.slice((page-1)*ITEMS_PER_PAGE, page*ITEMS_PER_PAGE)) {
+            for (const [name, stats] of sortedGuns.slice((page-1)*ITEMS_PER_PAGE, page*ITEMS_PER_PAGE)) {
                 html += `
                 <li class="feature-item">
-                    <span class="feature-icon"></span>
                     <div class="feature-content">
-                        <h3 style="margin-bottom:8px;">${name}</h3>
-                        <p style="margin:0 0 0 16px;">
+                        <h3 style="margin-bottom:8px;">${escapeHtml(name)} <span style="color:var(--muted); font-weight:600; font-size:12px;">[${escapeHtml(stats.category || '')}]</span></h3>
+                        <p style="margin:0;">
                             Damage: ${Array.isArray(stats.damage) ? stats.damage.join(' - ') : 'N/A'}<br>
                             Range: ${Array.isArray(stats.range) ? stats.range.join(' - ') : 'N/A'}<br>
                             Fire Rate: ${stats.fire_rate ?? '—'}<br>
-                            Accuracy: ${stats.accuracy ?? '—'}<br>
-                            Capacity: ${stats.capacity ?? '—'}<br>
+                            Accuracy: ${stats.accuracy ?? '—'} • Capacity: ${stats.capacity ?? '—'}<br>
                             Recoil: V${stats.vert_recoil ?? '—'} H${stats.hor_recoil ?? '—'}<br>
                             Head Mult: ${stats.head_mult ?? '—'}, Torso: ${stats.torso_mult ?? '—'}, Limb: ${stats.limb_mult ?? '—'}<br>
-                            Reload: ${stats.reload ?? '—'}<br>
-                            Mode: ${stats.mode ?? '—'}<br>
-                            ${stats.spawn ? `Spawn: ${stats.spawn}<br>` : ''}
-                            ${stats.gamepass ? `<span style="color:#e25">gamepass only</span>` : ''}
+                            Reload: ${stats.reload ?? '—'} • Equip: ${stats.equip ?? '—'} • Aim: ${stats.aim ?? '—'}<br>
+                            ${stats.spawn ? `Spawn: ${escapeHtml(stats.spawn)}<br>` : ''}
+                            ${stats.gamepass ? `<span style="color:var(--accent)">gamepass only</span>` : ''}
                         </p>
                     </div>
                 </li>`;
             }
             html += `</ul>`;
         }
-        // buttons for pages
+
+        // pagination controls
         html += `
-        <div class="pagination-buttons" style="margin-top:48px;">
-            <button class="pagination-btn" id="prevPageBtn" style="width:180px;" ${page === 1 ? 'disabled' : ''}>&lt;&lt; previous page</button>
-            <button class="pagination-btn" id="nextPageBtn" style="width:180px;" ${page === totalPages ? 'disabled' : ''}>next page &gt;&gt;</button>
-        </div>
-        <div style="text-align:center;margin-top:8px;color:#fff;font-size:13px;">Page ${page} / ${totalPages}</div>
+            <div class="pagination-buttons" style="margin-top:18px;">
+                <button class="pagination-btn" id="prevPageBtn" style="width:180px;" ${page === 1 ? 'disabled' : ''}>&lt;&lt; previous page</button>
+                <button class="pagination-btn" id="nextPageBtn" style="width:180px;" ${page === totalPages ? 'disabled' : ''}>next page &gt;&gt;</button>
+            </div>
         `;
+
         pageContent.innerHTML = html;
+        hookPageHamburger();
         pageContent.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+        // attach sort handlers
+        document.getElementById('sortSelect')?.addEventListener('change', (e) => {
+            currentSort = e.target.value;
+            renderCategory(currentCategory, 1);
+        });
+        document.getElementById('toggleSortOrder')?.addEventListener('click', (e) => {
+            sortAsc = !sortAsc;
+            e.target.textContent = sortAsc ? 'Asc' : 'Desc';
+            e.target.setAttribute('aria-pressed', sortAsc);
+            renderCategory(currentCategory, 1);
+        });
+
         document.getElementById('prevPageBtn')?.addEventListener('click', () => {
-            renderCategory(currentCategory, currentPage-1);
+            renderCategory(currentCategory, Math.max(1, currentPage-1));
         });
         document.getElementById('nextPageBtn')?.addEventListener('click', () => {
-            renderCategory(currentCategory, currentPage+1);
+            renderCategory(currentCategory, Math.min(totalPages, currentPage+1));
         });
+    }
+
+    /* ---------- DOM initialisation ---------- */
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        sidebar.classList.toggle('hidden');
+        mainContent.classList.toggle('full');
+    }
+
+    // page-hamburger may appear multiple times (re-render); hook it up here
+    function hookPageHamburger(){
+        const pageHamburger = document.getElementById('pageHamburger');
+        if (pageHamburger) {
+            pageHamburger.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleSidebar();
+            });
+        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         const categories = getCategories();
         buildSidebar(categories);
+
+        // sidebar nav click
         document.getElementById('sidebar').addEventListener('click', function(e) {
             const item = e.target.closest('.nav-item');
             if (item) {
@@ -2747,38 +3091,109 @@
                 renderCategory(item.getAttribute('data-category'), 1);
             }
         });
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        document.getElementById('hamburger').addEventListener('click', () => {
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('full');
+
+        // header hamburger (hidden) kept for backward compatibility
+        document.getElementById('hamburger').addEventListener('click', () => toggleSidebar());
+
+        // THEME TOGGLE
+        const themeToggle = document.getElementById('themeToggle');
+        // load saved pref
+        const saved = localStorage.getItem('townguns:theme');
+        if (saved === 'light') document.body.classList.add('light');
+        // set icon
+        function updateThemeIcon(){
+            if (document.body.classList.contains('light')) {
+                themeToggle.textContent = '☀️';
+                themeToggle.setAttribute('aria-pressed','true');
+            } else {
+                themeToggle.textContent = '🌙';
+                themeToggle.setAttribute('aria-pressed','false');
+            }
+        }
+        updateThemeIcon();
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light');
+            if (document.body.classList.contains('light')) localStorage.setItem('townguns:theme','light');
+            else localStorage.removeItem('townguns:theme');
+            updateThemeIcon();
         });
+
         // render first page
         document.querySelector(`.nav-item[data-category="information"]`)?.classList.add('active');
         renderCategory("information", 1);
-    });
-    const searchBox = document.querySelector('.search-box');
-    searchBox.addEventListener('focus', () => searchBox.style.width = '280px');
-    searchBox.addEventListener('blur', () => { if(!searchBox.value) searchBox.style.width = '240px'; });
-        // --- ToC handler ---
-    function updateTocContent(tocType, category) {
-        const tocContent = document.getElementById('toc-content');
-        if (tocType === 'about') {
-            tocContent.innerHTML = `<strong>About:</strong> <br>this is the about section for <b>${categoryLabel(category)}</b>.<br> all guns are good if used right`;
-        } else if (tocType === 'this') {
-            //the summary of the page
-            tocContent.innerHTML = `<strong>This page:</strong> <br>stats and info for <b>${categoryLabel(category)}</b>.`;
-        } else if (tocType === 'information') {
-            tocContent.innerHTML = `<strong>Information:</strong> <br>this site lists all guns in town!.`;
-        }
-    }
 
-    // set default on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        updateTocContent('about', currentCategory || "information");
+        // hook up search interactions
+        const searchBox = document.querySelector('.search-box');
+        searchBox.addEventListener('focus', () => searchBox.style.width = '320px');
+        searchBox.addEventListener('blur', () => { if(!searchBox.value) searchBox.style.width = '240px'; });
+
+        // live search (debounced)
+        let searchTimer = null;
+        searchBox.addEventListener('input', (e) => {
+            clearTimeout(searchTimer);
+            const v = e.target.value;
+            searchTimer = setTimeout(() => {
+                lastSearchTerm = v;
+                if (v.trim().length) {
+                    // clear active sidebar nav items
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    renderSearchResults(v);
+                } else {
+                    // empty -> go back to category view
+                    renderCategory(currentCategory || 'information', 1);
+                }
+            }, 220);
+        });
+        // Enter to search explicitly
+        searchBox.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Enter') {
+                ev.preventDefault();
+                lastSearchTerm = ev.target.value;
+                renderSearchResults(lastSearchTerm);
+            } else if (ev.key === 'Escape') {
+                ev.target.value = '';
+                lastSearchTerm = '';
+                renderCategory(currentCategory || 'information', 1);
+            }
+        });
+
+        // logo easter egg: click 5 times to show modal
+        const logo = document.getElementById('site-logo');
+        let logoClicks = 0;
+        logo.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks >= 5) {
+                showEasterEgg("You discovered the logo easter egg. Nice clicks.");
+                logoClicks = 0;
+            }
+            // reset after 1.2s of inactivity
+            setTimeout(() => { logoClicks = 0; }, 1200);
+        });
+
+        // s
+        const secret = ['t','h','e', ' ', 'm','u','s','i','c',' ','i','s',' ','t','h','e',' ','k','e','y'];
+        let secretPos = 0;
+        document.addEventListener('keydown', (e) => {
+            const k = e.key.toLowerCase();
+            if (k === secret[secretPos]) {
+                secretPos++;
+                if (secretPos === secret.length) {
+                    showEasterEgg("and now the night is gone");
+                    secretPos = 0;
+                }
+            } else {
+                secretPos = k === secret[0] ? 1 : 0;
+            }
+        });
+
+        // easter egg modal controls
+        document.getElementById('eg-close').addEventListener('click', () => hideEasterEgg());
+        document.getElementById('eg-overlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('eg-overlay')) hideEasterEgg();
+        });
     });
 
-    // listen for toc link clicks (deselect if already active)
+    /* ---------- ToC handler ---------- */
     const TOC_TEXTS = {
         about: {
             'assault_rifle': `assault rifles are good for all types of engagements, my personal favorite is the M4 Carbine or SOPMOD.`,
@@ -2818,12 +3233,10 @@
         }
     };
 
-    // helper: fallback to default if not set
     function getTocText(type, category) {
         return (TOC_TEXTS[type] && TOC_TEXTS[type][category]) || `(${type} content not set for ${categoryLabel(category)})`;
     }
 
-    // transition and content update
     function updateTocContent(tocType, category) {
         const tocContent = document.getElementById('toc-content');
         tocContent.classList.add('fade');
@@ -2833,12 +3246,6 @@
         }, 200);
     }
 
-    // set default on page load
-    document.addEventListener('DOMContentLoaded', () => {
-        updateTocContent('about', currentCategory || "information");
-    });
-
-    // listen for ToC link clicks (deselect if already active)
     document.getElementById('toc-list').addEventListener('click', function(e) {
         const link = e.target.closest('.toc-link');
         if (!link) return;
@@ -2856,15 +3263,27 @@
         const tocType = link.getAttribute('data-toc');
         updateTocContent(tocType, currentCategory || "information");
     });
+
+    // easter egg helpers
+    function showEasterEgg(message) {
+        const overlay = document.getElementById('eg-overlay');
+        document.getElementById('eg-message').textContent = message;
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden', 'false');
+    }
+    function hideEasterEgg() {
+        const overlay = document.getElementById('eg-overlay');
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden', 'true');
+    }
     </script>
 
-
-<style>
-.category-dropdowns{margin:16px 0 32px;}
-.dropdown-block{margin-bottom:12px;background:#1a1a1a;border:1px solid #333;
-border-radius:6px;padding:8px 12px;color:#e6e6e6;cursor:pointer;}
-.dropdown-block summary{font-weight:600;font-size:15px;outline:none;}
-.dropdown-content{margin-top:8px;font-size:14px;color:#999;}
-</style>
+    <style>
+    .category-dropdowns{margin:16px 0 32px;}
+    .dropdown-block{margin-bottom:12px;background:var(--panel-2);border:1px solid var(--control-border);
+    border-radius:8px;padding:10px 14px;color:var(--text);cursor:pointer;}
+    .dropdown-block summary{font-weight:700;font-size:15px;outline:none;list-style:none;}
+    .dropdown-content{margin-top:8px;font-size:14px;color:var(--muted);}
+    </style>
 </body>
 </html>
