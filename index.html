@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Futures, made of, virtual insanity~ || fuck u adrev btw dont think i forgot u bitch V1 (post ipsums)</title>
     <style>
-        /* base / theme variables */
+        /* Base / theme variables */
         :root{
             --bg: #000;
             --panel: #0b0b0b;
@@ -16,7 +16,21 @@
             --panel-2: #1a1a1a;
             --control-bg: #1a1a1a;
             --control-border: #333;
+
+            /* compare button / switch variables (use control colors by default) */
+            --compare-btn-bg: var(--control-bg);
+            --compare-btn-border: var(--control-border);
+
+            --compare-switch-bg: var(--control-bg);
+            --compare-switch-border: var(--control-border);
+
+            /* checked state (dark mode defaults) */
+            --compare-switch-checked-bg: #000; /* black background when checked */
+            --compare-switch-checked-border: #000;
+            --compare-checkmark-color: #fff; /* white checkmark when checked */
         }
+
+        /* Light theme overrides - variables swap automatically */
         .light {
             --bg: #f5f6f7;
             --panel: #ffffff;
@@ -27,6 +41,18 @@
             --panel-2: #f0f0f0;
             --control-bg: #fff;
             --control-border: #d6d6d6;
+
+            /* swap compare visuals for light mode */
+            --compare-btn-bg: var(--control-bg);
+            --compare-btn-border: var(--control-border);
+
+            --compare-switch-bg: var(--control-bg);
+            --compare-switch-border: var(--control-border);
+
+            /* checked state in light mode: white BG + black checkmark */
+            --compare-switch-checked-bg: #fff;
+            --compare-switch-checked-border: #d6d6d6;
+            --compare-checkmark-color: #000;
         }
 
         body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; margin:0; }
@@ -42,6 +68,25 @@
 
         .icon-btn { width: 36px; height: 36px; background: var(--control-bg); border: 1px solid var(--control-border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text); cursor: pointer; transition: all 0.18s ease; font-size: 14px; }
         .icon-btn:hover { background: var(--panel-2); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+
+        /* bigger, clearer Compare button - uses control colors (swaps with .light via variables) */
+        #openCompareBtn.icon-btn {
+            min-width: 140px;
+            padding: 10px 14px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+            border: 1px solid var(--compare-btn-border);
+            color: var(--text);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #openCompareBtn.icon-btn:hover {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+        }
 
         /* hide header hamburger (we place page hamburger beside page title) */
         .header-icons #hamburger { display: none; }
@@ -66,7 +111,7 @@
         .feature-list .feature-item + .feature-item { margin-top: 16px; }
         .feature-item { display: flex; align-items: flex-start; gap: 16px; padding: 18px; border-radius: 10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); border:1px solid var(--border); margin-bottom:8px; }
         .feature-icon { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; font-size: 18px; }
-        .feature-content h3 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+        .feature-content h3 { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; display:flex; align-items:center; gap:12px; }
         .feature-content p { font-size: 15px; color: var(--muted); line-height: 1.5; margin-left: 0; margin-top:4px; }
 
         .toc { position: fixed; right: 24px; top: 50%; transform: translateY(-50%); width: 220px; background: var(--panel); backdrop-filter: blur(8px); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
@@ -138,6 +183,65 @@
         .eg-modal p { color:var(--muted); margin-bottom:16px; }
         .eg-modal .close { display:inline-block; padding:8px 14px; border-radius:8px; background:var(--control-bg); border:1px solid var(--control-border); cursor:pointer; color:var(--text); }
 
+        /* compare modal styles */
+        .compare-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2100; }
+        .compare-overlay.show { display:flex; }
+        .compare-modal { background: var(--panel); border:1px solid var(--border); padding:18px; border-radius:12px; max-width:920px; width: calc(100% - 48px); color:var(--text); box-shadow: 0 10px 40px rgba(0,0,0,0.7); overflow:auto; max-height: 85vh; }
+        .compare-modal h3 { margin: 0 0 12px; font-size:18px; }
+        .compare-table { width:100%; border-collapse: collapse; }
+        .compare-table th, .compare-table td { border: 1px solid var(--control-border); padding: 8px; text-align: left; color:var(--text); font-size:13px; }
+        .compare-controls { display:flex; gap:8px; justify-content: flex-end; margin-top: 12px; }
+
+        /* the hidden real checkbox input */
+        .compare-checkbox { position:absolute; opacity:0; width:0; height:0; pointer-events:auto; }
+
+        /* visual toggle wrapper placed after the name */
+        .compare-toggle { display:inline-flex; align-items:center; margin-left:8px; position:relative; cursor:pointer; }
+
+        /* make the visual "box" bigger and neater */
+        .compare-switch {
+            display:inline-block;
+            width: 22px;   /* increased size */
+            height: 22px;  /* increased size */
+            border-radius: 6px;
+            border:1px solid var(--compare-switch-border);
+            background:var(--compare-switch-bg);
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.06);
+            transition: all .12s ease;
+            vertical-align: middle;
+            flex: 0 0 auto;
+        }
+
+        /* checkmark (styled via ::after) tuned for the bigger box */
+        .compare-switch::after {
+            content:'';
+            display:block;
+            width:7px;
+            height:12px;
+            border:2px solid transparent;
+            border-top:0;
+            border-left:0;
+            transform:rotate(40deg) scale(0);
+            margin: 0 auto;
+            transition: transform .12s ease, border-color .12s ease;
+            /* position a bit to visually center */
+            margin-top: 1px;
+        }
+
+        /* checked state: use variable-driven colors so light/dark swap */
+        .compare-toggle input:checked + .compare-switch {
+            background: var(--compare-switch-checked-bg);
+            border-color: var(--compare-switch-checked-border);
+            box-shadow: 0 0 0 6px rgba(0,0,0,0.06); /* subtle halo */
+        }
+        .compare-toggle input:checked + .compare-switch::after {
+            border-color: var(--compare-checkmark-color);
+            transform: rotate(40deg) scale(1);
+        }
+
+        .compare-summary { font-size:13px; color:var(--muted); margin-bottom:8px; }
+        .compare-note { font-size:13px; color:var(--muted); margin-top:8px; }
+
         /* small responsive tweak */
         @media (max-width: 900px) {
             .toc { display: none; }
@@ -146,6 +250,8 @@
             .content-area { padding: 24px; }
             .page-title { font-size: 28px; }
             .title-row { gap:10px; }
+            .modern-select select { min-width: 110px; }
+            #openCompareBtn.icon-btn { min-width: 110px; padding: 8px 12px; font-size:14px; }
         }
     </style>
 </head>
@@ -199,51 +305,26 @@
         </div>
     </div>
 
+    <!-- compare modal -->
+    <div class="compare-overlay" id="compare-overlay" aria-hidden="true">
+        <div class="compare-modal" role="dialog" aria-modal="true">
+            <h3>Compare selected guns</h3>
+            <div id="compare-summary" class="compare-summary"></div>
+            <div id="compare-table-wrap"></div>
+            <div class="compare-controls">
+                <button class="icon-btn" id="closeCompare">Close</button>
+                <button class="icon-btn" id="clearCompare">Clear Selection</button>
+            </div>
+            <div class="compare-note">tip: select up to 6 guns to compare. Click the small box after a gun's name to add it.</div>
+        </div>
+    </div>
+
     <script>
     // the big data....
     // beware!!! le epik data ahead!!!
             const TOWN_GUNS = {
-            "": {
-                "category": "unknown",
-                "damage": [0,0],
-                "range": [0,0],
-                "fire_rate": "Rounds/Minute",
-                "accuracy": 0,
-                "capacity": 0,
-                "vert_recoil": 0.0,
-                "hor_recoil": 0.0,
-                "head_mult": 1.0,
-                "torso_mult": 1.0,
-                "limb_mult": 1.0,
-                "reload": 0.0,
-                "equip": 0.0,
-                "aim": 0.0,
-                "weight": 0.0,
-                "mode": "",
-                "gamepass": true,
-                "spawn": "Not case sensitive"
-            },
-            "Name": {
-                "category": "unknown",
-                "damage": [0,0],
-                "range": [0,0],
-                "fire_rate": "Fire Rate",
-                "accuracy": 0,
-                "capacity": 0,
-                "vert_recoil": 0.0,
-                "hor_recoil": 0.0,
-                "head_mult": 1.0,
-                "torso_mult": 1.0,
-                "limb_mult": 1.0,
-                "reload": 0.0,
-                "equip": 0.0,
-                "aim": 0.0,
-                "weight": 0.0,
-                "mode": "Firing mode",
-                "gamepass": true,
-                "spawn": "Shortest name for spawning"
-            },
-                "AG-18c": {
+
+            "AG-18c": {
             "category": "pistol",
             "damage": [
             20,
@@ -2687,7 +2768,9 @@
             "spawn": "WA"
         }
     };
+    </script>
 
+    <script>
     /* ---------- utilities ---------- */
     function categoryLabel(cat) {
         const labels = {
@@ -2740,6 +2823,9 @@
         sidebar.innerHTML += `<div class="nav-divider"><strong>PAGES</strong></div>
             <a href="#" class="nav-item" data-category="nothing_important"><strong>To-Do</strong></a>
             <a href="#" class="nav-item" data-category="progress"><strong>Progress</strong></a>`;
+
+        // All tab (aligned with other nav items)
+        sidebar.innerHTML += `<a href="#" class="nav-item" data-category="all"><strong>All Guns</strong></a>`;
     }
 
     /* ---------- pagination / sorting / search state ---------- */
@@ -2747,12 +2833,17 @@
     let currentCategory = null;
     let currentPage = 1;
 
-    // sorting state
-    let currentSort = 'name'; // many keys: name | damage | fire_rate | accuracy | capacity | weight | range | head_mult | torso_mult | limb_mult | reload | equip | aim | vert_recoil | hor_recoil | gamepass
+    // sorting state (primary + optional secondary)
+    let currentSortPrimary = 'name';
+    let currentSortSecondary = 'none';
     let sortAsc = false;
 
     // search state
     let lastSearchTerm = '';
+
+    // compare state
+    const MAX_COMPARE = 6;
+    let compareSelection = []; // array of gun names selected for compare
 
     // helpers to parse numeric-ish fields safely
     function parseNumber(val) {
@@ -2794,19 +2885,43 @@
         }
     }
 
-    function sortGunsArray(gunsArr, sortBy, asc) {
+    // now supports primary and secondary sort keys
+    function sortGunsArray(gunsArr, primary, secondary, asc) {
         const arr = [...gunsArr];
-        if (sortBy === 'name') {
+        const primaryIsName = primary === 'name';
+        const secondaryIsName = secondary === 'name';
+        if (primaryIsName && (!asc)) {
+            // name descending handled below after sort
             arr.sort((a,b) => a[0].localeCompare(b[0]));
-            if (!asc) arr.reverse();
-        } else {
-            arr.sort((a,b) => {
-                const va = getComparableValue(a[1], sortBy);
-                const vb = getComparableValue(b[1], sortBy);
-                if (va === vb) return a[0].localeCompare(b[0]);
-                return asc ? va - vb : vb - va;
-            });
+            arr.reverse();
+            return arr;
         }
+        arr.sort((a,b) => {
+            // primary compare
+            if (primaryIsName) {
+                const cmpPrimary = a[0].localeCompare(b[0]);
+                if (cmpPrimary !== 0) return asc ? cmpPrimary : -cmpPrimary;
+            } else {
+                const va = getComparableValue(a[1], primary);
+                const vb = getComparableValue(b[1], primary);
+                if (va !== vb) return asc ? va - vb : vb - va;
+            }
+
+            // secondary compare (if provided)
+            if (secondary && secondary !== 'none') {
+                if (secondaryIsName) {
+                    const cmp = a[0].localeCompare(b[0]);
+                    if (cmp !== 0) return asc ? cmp : -cmp;
+                } else {
+                    const va2 = getComparableValue(a[1], secondary);
+                    const vb2 = getComparableValue(b[1], secondary);
+                    if (va2 !== vb2) return asc ? va2 - vb2 : vb2 - va2;
+                }
+            }
+
+            // fallback to name ascending
+            return a[0].localeCompare(b[0]);
+        });
         return arr;
     }
 
@@ -2824,6 +2939,92 @@
                 <h1 class="page-title">${escapeHtml(title)}</h1>
             </div>
         `;
+    }
+
+    /* ---------- compare helpers ---------- */
+    function updateCompareButton() {
+        const btn = document.getElementById('openCompareBtn');
+        if (!btn) return;
+        btn.textContent = `Compare (${compareSelection.length})`;
+        btn.disabled = compareSelection.length < 2;
+    }
+
+    function openCompareModal() {
+        const overlay = document.getElementById('compare-overlay');
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden','false');
+        renderCompareTable();
+    }
+    function closeCompareModal() {
+        const overlay = document.getElementById('compare-overlay');
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden','true');
+    }
+    function clearCompareSelection() {
+        compareSelection = [];
+        // uncheck checkboxes if present
+        document.querySelectorAll('.compare-checkbox').forEach(cb => { cb.checked = false; });
+        updateCompareButton();
+        closeCompareModal();
+    }
+
+    function renderCompareTable() {
+        const wrap = document.getElementById('compare-table-wrap');
+        if (!wrap) return;
+        if (!compareSelection.length) {
+            wrap.innerHTML = `<div class="compare-summary">No guns selected.</div>`;
+            return;
+        }
+        // build table with columns per gun
+        const attributes = [
+            {key:'category', label:'Category'},
+            {key:'damage', label:'Damage'},
+            {key:'range', label:'Range'},
+            {key:'fire_rate', label:'Fire Rate (parsed)'},
+            {key:'capacity', label:'Capacity'},
+            {key:'accuracy', label:'Accuracy'},
+            {key:'vert_recoil', label:'Vert Recoil'},
+            {key:'hor_recoil', label:'Hor Recoil'},
+            {key:'head_mult', label:'Head Mult'},
+            {key:'torso_mult', label:'Torso Mult'},
+            {key:'limb_mult', label:'Limb Mult'},
+            {key:'reload', label:'Reload'},
+            {key:'equip', label:'Equip'},
+            {key:'aim', label:'Aim'},
+            {key:'weight', label:'Weight'},
+            {key:'mode', label:'Mode'},
+            {key:'gamepass', label:'Gamepass'}
+        ];
+
+        let html = `<table class="compare-table"><thead><tr><th>Attribute</th>`;
+        compareSelection.forEach(name => {
+            html += `<th>${escapeHtml(name)}</th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        attributes.forEach(attr => {
+            html += `<tr><td><strong>${escapeHtml(attr.label)}</strong></td>`;
+            compareSelection.forEach(name => {
+                const stats = TOWN_GUNS[name] || {};
+                let val = stats[attr.key];
+                if (attr.key === 'damage' || attr.key === 'range') {
+                    val = Array.isArray(val) ? val.join(' - ') : String(val ?? '—');
+                } else if (attr.key === 'fire_rate') {
+                    const parsed = parseNumber(val);
+                    val = (val !== undefined && val !== null) ? `${val} ${parsed ? `(${parsed} RPM)` : ''}` : '—';
+                } else if (attr.key === 'gamepass') {
+                    val = stats.gamepass ? 'Yes' : 'No';
+                } else {
+                    val = (val !== undefined && val !== null) ? String(val) : '—';
+                }
+                html += `<td>${escapeHtml(val)}</td>`;
+            });
+            html += `</tr>`;
+        });
+
+        html += `</tbody></table>`;
+        wrap.innerHTML = html;
+        document.getElementById('compare-summary').textContent = `${compareSelection.length} gun(s) selected for comparison.`;
     }
 
     /* ---------- search ---------- */
@@ -2853,13 +3054,22 @@
         } else {
             html += `<ul class="feature-list">`;
             for (const [name, stats] of hits) {
+                const parsedFR = parseNumber(stats.fire_rate);
+                const frDisplay = (stats.fire_rate !== undefined && stats.fire_rate !== null) ? `${stats.fire_rate} ${parsedFR ? `(${parsedFR} RPM)` : ''}` : '—';
+                const checked = compareSelection.includes(name) ? 'checked' : '';
                 html += `<li class="feature-item search-hit" data-name="${escapeHtml(name)}">
                     <div class="feature-content">
-                        <h3 style="margin-bottom:6px;">${escapeHtml(name)} <span class="cat">[${escapeHtml(stats.category || 'unknown')}]</span></h3>
+                        <h3 style="margin-bottom:6px;">
+                            ${escapeHtml(name)} <span class="cat">[${escapeHtml(stats.category || 'unknown')}]</span>
+                            <label class="compare-toggle" title="Select for compare">
+                                <input type="checkbox" class="compare-checkbox" data-name="${escapeHtml(name)}" ${checked} />
+                                <span class="compare-switch" aria-hidden="true"></span>
+                            </label>
+                        </h3>
                         <p style="margin:0 0 0 0;">
                             Damage: ${Array.isArray(stats.damage) ? stats.damage.join(' - ') : 'N/A'}<br>
                             Range: ${Array.isArray(stats.range) ? stats.range.join(' - ') : 'N/A'}<br>
-                            Fire Rate: ${stats.fire_rate ?? '—'} • Capacity: ${stats.capacity ?? '—'}<br>
+                            Fire Rate: ${escapeHtml(frDisplay)} • Capacity: ${stats.capacity ?? '—'}<br>
                             ${stats.spawn ? `Spawn: ${escapeHtml(stats.spawn)}<br>` : ''}
                             ${stats.gamepass ? `<span style="color:var(--accent)">gamepass only</span>` : ''}
                         </p>
@@ -2871,14 +3081,21 @@
         pageContent.innerHTML = html;
         hookPageHamburger(); // ensure hamburger on page works
         pageContent.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+        // hook compare checkboxes
+        pageContent.querySelectorAll('.compare-checkbox').forEach(cb => {
+            cb.addEventListener('change', handleCompareCheckbox);
+        });
+        updateCompareButton();
     }
 
-    /* ---------- category rendering (with sorts + new keys) ---------- */
+    /* ---------- category rendering (with sorts + new keys + compare checkboxes) ---------- */
     function renderCategory(category, page = 1) {
         currentCategory = category;
         currentPage = page;
         lastSearchTerm = ''; // clear current search when switching categories
-        document.querySelector('.search-box').value = '';
+        const searchBox = document.querySelector('.search-box');
+        if (searchBox) searchBox.value = '';
 
         const pageContent = document.getElementById('page-content');
         // update ToC content when changing main page
@@ -2936,6 +3153,10 @@
                     <li class="feature-item">improve hamburger menu <strong style="color:#9f9">(DONE)</strong></li>
                     <li class="feature-item">make the searchbar work <strong style="color:#9f9">(DONE)</strong></li>
                     <li class="feature-item">sorting by stats <strong style="color:#9f9">(DONE)</strong></li>
+                    <li class="feature-item">sort by more than 1 (like firerate + dmg) <strong style="color:#9f9">(DONE)</strong></li>
+                    <li class="feature-item">comparison <strong style="color:#9f9">(DONE)</strong></li>
+                    <li class="feature-item">display firerate <strong style="color:#9f9">(DONE)</strong></li>
+                    <li class="feature-item">add an all tab <strong style="color:#9f9">(DONE)</strong></li>
                 </ul>`;
             pageContent.innerHTML = html;
             hookPageHamburger();
@@ -2952,7 +3173,8 @@
                     <li class="feature-item">- day 3: implemented the to-do and progress lists (TODAY AS OF NOW (9/22/2025) IS DAY 3). LATER -- GMT+0 3:18PM 9/22/2025: implemented an introduction page</li>
                     <li class="feature-item">- day 4: made the info and stuff work (TODAY AS OF NOW (10/11/2025) IS DAY 4). LATER -- GMT+0 6:33AM 10/11/2025: resumed work on the website </li>
                     <li class="feature-item">- day 5: connection terminated (TODAY AS OF NOW (12/4/2025) IS DAY 5). LATER -- GMT+0 6:37AM 12/4/2025: resumed work on the website x2 </li>
-                    <li class="feature-item">- day 5: implemented search bar, light and dark mode. revamped the top bar so things behind it have a heavy blur. revamped the todo page by adding colors to the (DONE) and (NOT COMPLETE) thingies. added a sort by, which includes ascending order and descending.  GMT+0 7:36PM 12/4/2025 </li>
+                    <li class="feature-item">- day 5 (LOG 2): implemented search bar, light and dark mode. revamped the top bar so things behind it have a heavy blur. revamped the todo page by adding colors to the (DONE) and (NOT COMPLETE) thingies. added a sort by, which includes ascending order and descending.  GMT+0 7:36PM 12/4/2025 </li>
+                    <li class="feature-item">- day 6: (GMT+0 9:02 AM 12/9/2025) implemented an all page, added sorting by different categories, FINALLY removed the if i remove this the site will break one way or another thing, added comparisons.</li>
                 </ul>`;
             pageContent.innerHTML = html;
             hookPageHamburger();
@@ -2960,41 +3182,75 @@
             return;
         }
 
-        // default: gun categories
-        const guns = Object.entries(TOWN_GUNS).filter(([name, gun]) => gun.category === category);
-        // apply sort BEFORE paging
-        const sortedGuns = sortGunsArray(guns, currentSort, sortAsc);
+        // default: gun categories or 'all'
+        let guns;
+        if (category === 'all') {
+            // include all named guns (exclude empty placeholder keys)
+            guns = Object.entries(TOWN_GUNS).filter(([name, gun]) => name && name !== '');
+        } else {
+            guns = Object.entries(TOWN_GUNS).filter(([name, gun]) => gun.category === category);
+        }
+
+        // apply sort BEFORE paging (supports secondary)
+        const sortedGuns = sortGunsArray(guns, currentSortPrimary, currentSortSecondary, sortAsc);
         const totalPages = Math.max(1, Math.ceil(sortedGuns.length / ITEMS_PER_PAGE));
         if (page < 1) page = 1;
         if (page > totalPages) page = totalPages;
 
-        let html = headerFor(categoryLabel(category));
+        let html = headerFor(category === 'all' ? 'All Guns' : categoryLabel(category));
 
-        // sort controls (modern select)
+        // sort controls (modern select) with secondary
         html += `
             <div class="sort-controls">
-                <label style="font-size:13px;color:var(--muted);">Sort by</label>
+                <label style="font-size:13px;color:var(--muted);">Sort</label>
                 <div class="modern-select">
-                    <select id="sortSelect" aria-label="Sort guns">
-                        <option value="name"${currentSort==='name' ? ' selected' : ''}>Name</option>
-                        <option value="damage"${currentSort==='damage' ? ' selected' : ''}>Damage</option>
-                        <option value="range"${currentSort==='range' ? ' selected' : ''}>Range</option>
-                        <option value="fire_rate"${currentSort==='fire_rate' ? ' selected' : ''}>Fire Rate</option>
-                        <option value="accuracy"${currentSort==='accuracy' ? ' selected' : ''}>Accuracy</option>
-                        <option value="capacity"${currentSort==='capacity' ? ' selected' : ''}>Capacity</option>
-                        <option value="weight"${currentSort==='weight' ? ' selected' : ''}>Weight</option>
-                        <option value="head_mult"${currentSort==='head_mult' ? ' selected' : ''}>Head Mult</option>
-                        <option value="torso_mult"${currentSort==='torso_mult' ? ' selected' : ''}>Torso Mult</option>
-                        <option value="limb_mult"${currentSort==='limb_mult' ? ' selected' : ''}>Limb Mult</option>
-                        <option value="reload"${currentSort==='reload' ? ' selected' : ''}>Reload</option>
-                        <option value="equip"${currentSort==='equip' ? ' selected' : ''}>Equip Speed</option>
-                        <option value="aim"${currentSort==='aim' ? ' selected' : ''}>Aim Time</option>
-                        <option value="vert_recoil"${currentSort==='vert_recoil' ? ' selected' : ''}>Vertical Recoil</option>
-                        <option value="hor_recoil"${currentSort==='hor_recoil' ? ' selected' : ''}>Horizontal Recoil</option>
-                        <option value="gamepass"${currentSort==='gamepass' ? ' selected' : ''}>Gamepass Only</option>
+                    <select id="sortSelect" aria-label="Primary sort">
+                        <option value="name"${currentSortPrimary==='name' ? ' selected' : ''}>Name</option>
+                        <option value="damage"${currentSortPrimary==='damage' ? ' selected' : ''}>Damage</option>
+                        <option value="range"${currentSortPrimary==='range' ? ' selected' : ''}>Range</option>
+                        <option value="fire_rate"${currentSortPrimary==='fire_rate' ? ' selected' : ''}>Fire Rate</option>
+                        <option value="accuracy"${currentSortPrimary==='accuracy' ? ' selected' : ''}>Accuracy</option>
+                        <option value="capacity"${currentSortPrimary==='capacity' ? ' selected' : ''}>Capacity</option>
+                        <option value="weight"${currentSortPrimary==='weight' ? ' selected' : ''}>Weight</option>
+                        <option value="head_mult"${currentSortPrimary==='head_mult' ? ' selected' : ''}>Head Mult</option>
+                        <option value="torso_mult"${currentSortPrimary==='torso_mult' ? ' selected' : ''}>Torso Mult</option>
+                        <option value="limb_mult"${currentSortPrimary==='limb_mult' ? ' selected' : ''}>Limb Mult</option>
+                        <option value="reload"${currentSortPrimary==='reload' ? ' selected' : ''}>Reload</option>
+                        <option value="equip"${currentSortPrimary==='equip' ? ' selected' : ''}>Equip Speed</option>
+                        <option value="aim"${currentSortPrimary==='aim' ? ' selected' : ''}>Aim Time</option>
+                        <option value="vert_recoil"${currentSortPrimary==='vert_recoil' ? ' selected' : ''}>Vertical Recoil</option>
+                        <option value="hor_recoil"${currentSortPrimary==='hor_recoil' ? ' selected' : ''}>Horizontal Recoil</option>
+                        <option value="gamepass"${currentSortPrimary==='gamepass' ? ' selected' : ''}>Gamepass Only</option>
                     </select>
                 </div>
+
+                <label style="font-size:13px;color:var(--muted);">Then by</label>
+                <div class="modern-select">
+                    <select id="sortSelect2" aria-label="Secondary sort">
+                        <option value="none"${currentSortSecondary==='none' ? ' selected' : ''}>None</option>
+                        <option value="name"${currentSortSecondary==='name' ? ' selected' : ''}>Name</option>
+                        <option value="damage"${currentSortSecondary==='damage' ? ' selected' : ''}>Damage</option>
+                        <option value="range"${currentSortSecondary==='range' ? ' selected' : ''}>Range</option>
+                        <option value="fire_rate"${currentSortSecondary==='fire_rate' ? ' selected' : ''}>Fire Rate</option>
+                        <option value="accuracy"${currentSortSecondary==='accuracy' ? ' selected' : ''}>Accuracy</option>
+                        <option value="capacity"${currentSortSecondary==='capacity' ? ' selected' : ''}>Capacity</option>
+                        <option value="weight"${currentSortSecondary==='weight' ? ' selected' : ''}>Weight</option>
+                        <option value="head_mult"${currentSortSecondary==='head_mult' ? ' selected' : ''}>Head Mult</option>
+                        <option value="torso_mult"${currentSortSecondary==='torso_mult' ? ' selected' : ''}>Torso Mult</option>
+                        <option value="limb_mult"${currentSortSecondary==='limb_mult' ? ' selected' : ''}>Limb Mult</option>
+                        <option value="reload"${currentSortSecondary==='reload' ? ' selected' : ''}>Reload</option>
+                        <option value="equip"${currentSortSecondary==='equip' ? ' selected' : ''}>Equip Speed</option>
+                        <option value="aim"${currentSortSecondary==='aim' ? ' selected' : ''}>Aim Time</option>
+                        <option value="vert_recoil"${currentSortSecondary==='vert_recoil' ? ' selected' : ''}>Vertical Recoil</option>
+                        <option value="hor_recoil"${currentSortSecondary==='hor_recoil' ? ' selected' : ''}>Horizontal Recoil</option>
+                        <option value="gamepass"${currentSortSecondary==='gamepass' ? ' selected' : ''}>Gamepass Only</option>
+                    </select>
+                </div>
+
                 <button id="toggleSortOrder" aria-pressed="${sortAsc}" class="icon-btn">${sortAsc ? 'Asc' : 'Desc'}</button>
+
+                <button id="openCompareBtn" class="icon-btn" style="margin-left:8px;">Compare (0)</button>
+
                 <div style="flex:1"></div>
                 <div style="color:var(--muted);font-size:13px;">Page ${page} / ${totalPages}</div>
             </div>
@@ -3005,14 +3261,23 @@
         } else {
             html += `<ul class="feature-list">`;
             for (const [name, stats] of sortedGuns.slice((page-1)*ITEMS_PER_PAGE, page*ITEMS_PER_PAGE)) {
+                const parsedFR = parseNumber(stats.fire_rate);
+                const frDisplay = (stats.fire_rate !== undefined && stats.fire_rate !== null) ? `${stats.fire_rate} ${parsedFR ? `(${parsedFR} RPM)` : ''}` : '—';
+                const checked = compareSelection.includes(name) ? 'checked' : '';
                 html += `
                 <li class="feature-item">
                     <div class="feature-content">
-                        <h3 style="margin-bottom:8px;">${escapeHtml(name)} <span style="color:var(--muted); font-weight:600; font-size:12px;">[${escapeHtml(stats.category || '')}]</span></h3>
+                        <h3 style="margin-bottom:8px;">
+                            ${escapeHtml(name)} <span style="color:var(--muted); font-weight:600; font-size:12px;">[${escapeHtml(stats.category || '')}]</span>
+                            <label class="compare-toggle" title="Select for compare">
+                                <input type="checkbox" class="compare-checkbox" data-name="${escapeHtml(name)}" ${checked} />
+                                <span class="compare-switch" aria-hidden="true"></span>
+                            </label>
+                        </h3>
                         <p style="margin:0;">
                             Damage: ${Array.isArray(stats.damage) ? stats.damage.join(' - ') : 'N/A'}<br>
                             Range: ${Array.isArray(stats.range) ? stats.range.join(' - ') : 'N/A'}<br>
-                            Fire Rate: ${stats.fire_rate ?? '—'}<br>
+                            Fire Rate: ${escapeHtml(frDisplay)}<br>
                             Accuracy: ${stats.accuracy ?? '—'} • Capacity: ${stats.capacity ?? '—'}<br>
                             Recoil: V${stats.vert_recoil ?? '—'} H${stats.hor_recoil ?? '—'}<br>
                             Head Mult: ${stats.head_mult ?? '—'}, Torso: ${stats.torso_mult ?? '—'}, Limb: ${stats.limb_mult ?? '—'}<br>
@@ -3040,9 +3305,14 @@
 
         // attach sort handlers
         document.getElementById('sortSelect')?.addEventListener('change', (e) => {
-            currentSort = e.target.value;
+            currentSortPrimary = e.target.value;
             renderCategory(currentCategory, 1);
         });
+        document.getElementById('sortSelect2')?.addEventListener('change', (e) => {
+            currentSortSecondary = e.target.value;
+            renderCategory(currentCategory, 1);
+        });
+
         document.getElementById('toggleSortOrder')?.addEventListener('click', (e) => {
             sortAsc = !sortAsc;
             e.target.textContent = sortAsc ? 'Asc' : 'Desc';
@@ -3056,6 +3326,41 @@
         document.getElementById('nextPageBtn')?.addEventListener('click', () => {
             renderCategory(currentCategory, Math.min(totalPages, currentPage+1));
         });
+
+        // attach compare checkboxes & compare button
+        pageContent.querySelectorAll('.compare-checkbox').forEach(cb => {
+            cb.addEventListener('change', handleCompareCheckbox);
+        });
+        document.getElementById('openCompareBtn')?.addEventListener('click', () => {
+            if (compareSelection.length < 2) {
+                showEasterEgg('select at least 2 guns to compare.');
+                return;
+            }
+            openCompareModal();
+        });
+
+        updateCompareButton();
+    }
+
+    /* ---------- compare checkbox handler ---------- */
+    function handleCompareCheckbox(ev) {
+        const cb = ev.target;
+        const name = cb.getAttribute('data-name');
+        if (!name) return;
+        if (cb.checked) {
+            if (!compareSelection.includes(name)) {
+                if (compareSelection.length >= MAX_COMPARE) {
+                    // revert and warn
+                    cb.checked = false;
+                    showEasterEgg(`Max compare selection is ${MAX_COMPARE}.`);
+                    return;
+                }
+                compareSelection.push(name);
+            }
+        } else {
+            compareSelection = compareSelection.filter(n => n !== name);
+        }
+        updateCompareButton();
     }
 
     /* ---------- DOM initialisation ---------- */
@@ -3190,6 +3495,13 @@
         document.getElementById('eg-close').addEventListener('click', () => hideEasterEgg());
         document.getElementById('eg-overlay').addEventListener('click', (e) => {
             if (e.target === document.getElementById('eg-overlay')) hideEasterEgg();
+        });
+
+        // compare modal controls
+        document.getElementById('closeCompare').addEventListener('click', () => closeCompareModal());
+        document.getElementById('clearCompare').addEventListener('click', () => clearCompareSelection());
+        document.getElementById('compare-overlay')?.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('compare-overlay')) closeCompareModal();
         });
     });
 
